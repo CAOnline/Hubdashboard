@@ -18,10 +18,10 @@
       --red: #e05c5c;
       --green: #5ce08a;
       --blue: #5cb4e0;
+      --orange: #e0955c;
+      --purple: #a05ce0;
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       background: var(--bg);
       color: var(--text);
@@ -29,8 +29,6 @@
       min-height: 100vh;
       overflow-x: hidden;
     }
-
-    /* === GRID BACKGROUND === */
     body::before {
       content: '';
       position: fixed;
@@ -43,705 +41,551 @@
       z-index: 0;
     }
 
-    /* === HEADER === */
+    /* HEADER */
     header {
-      position: relative;
-      z-index: 10;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      padding: 36px 48px 0;
-      gap: 24px;
+      position: relative; z-index: 10;
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 36px 48px 0; gap: 24px;
     }
-
-    .logo-block {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
+    .logo-block { display: flex; align-items: center; gap: 16px; }
     .logo-mark {
-      width: 48px;
-      height: 48px;
-      background: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      width: 48px; height: 48px; background: var(--accent);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
+    .logo-mark svg { width: 26px; height: 26px; }
+    .logo-text { display: flex; flex-direction: column; gap: 2px; }
+    .logo-title { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; }
+    .logo-sub { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; }
+    .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+    #live-time { font-family: 'DM Mono', monospace; font-size: 28px; font-weight: 500; color: var(--accent); letter-spacing: -0.5px; line-height: 1; }
+    #live-date { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
 
-    .logo-mark svg {
-      width: 26px;
-      height: 26px;
-    }
+    .divider { position: relative; z-index: 10; height: 1px; background: var(--border); margin: 28px 48px; }
+    .divider::after { content: ''; position: absolute; left: 0; top: 0; width: 80px; height: 1px; background: var(--accent); }
 
-    .logo-text {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .logo-title {
-      font-size: 20px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      line-height: 1;
-    }
-
-    .logo-sub {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--accent);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .header-right {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 4px;
-    }
-
-    #live-time {
-      font-family: 'DM Mono', monospace;
-      font-size: 28px;
-      font-weight: 500;
-      color: var(--accent);
-      letter-spacing: -0.5px;
-      line-height: 1;
-    }
-
-    #live-date {
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    /* === DIVIDER === */
-    .divider {
-      position: relative;
-      z-index: 10;
-      height: 1px;
-      background: var(--border);
-      margin: 28px 48px;
-    }
-
-    .divider::after {
-      content: '';
-      position: absolute;
-      left: 0; top: 0;
-      width: 80px; height: 1px;
-      background: var(--accent);
-    }
-
-    /* === SECTION LABEL === */
     .section-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--accent);
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      margin: 0 48px 20px;
-      position: relative;
-      z-index: 10;
-      display: flex;
-      align-items: center;
+      font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent);
+      letter-spacing: 0.15em; text-transform: uppercase;
+      margin: 0 48px 20px; position: relative; z-index: 10;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* CENTRES */
+    .centres-strip { position: relative; z-index: 10; display: flex; gap: 12px; margin: 0 48px 36px; flex-wrap: wrap; }
+    .centre-pill { display: flex; align-items: center; gap: 8px; background: var(--bg2); border: 1px solid var(--border); padding: 10px 16px; cursor: default; transition: border-color 0.2s; }
+    .centre-pill:hover { border-color: var(--accent); }
+    .centre-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); animation: pulse 2s ease-in-out infinite; }
+    .centre-dot.unmanned { background: var(--blue); box-shadow: 0 0 6px var(--blue); }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .centre-name { font-size: 13px; font-weight: 600; }
+    .centre-ref { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+
+    /* DAILY SCHEDULE */
+    .schedule-wrapper { position: relative; z-index: 10; margin: 0 48px 36px; }
+
+    .day-selector {
+      display: flex; gap: 8px; margin-bottom: 0; flex-wrap: wrap;
+    }
+    .day-btn {
+      font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+      background: var(--bg2); border: 1px solid var(--border);
+      color: var(--muted); padding: 10px 20px; cursor: pointer;
+      transition: all 0.2s; letter-spacing: 0.02em;
+    }
+    .day-btn:hover { border-color: var(--accent); color: var(--text); }
+    .day-btn.active { background: var(--accent); border-color: var(--accent); color: #0f0f0f; }
+
+    .schedule-panel {
+      display: none;
+      background: var(--bg2); border: 1px solid var(--border); border-top: none;
+      padding: 0;
+      animation: fadeInUp 0.25s ease;
+    }
+    .schedule-panel.active { display: block; }
+
+    .schedule-day-header {
+      padding: 20px 28px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .schedule-day-title { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; }
+    .schedule-day-focus {
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      padding: 4px 10px; border: 1px solid; letter-spacing: 0.08em; text-transform: uppercase;
+    }
+
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+    }
+
+    .schedule-row {
+      display: contents;
+    }
+    .schedule-time {
+      font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted);
+      padding: 10px 0 10px 28px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+    }
+    .schedule-task {
+      padding: 10px 28px; border-bottom: 1px solid var(--border);
+      font-size: 13px; font-weight: 600; display: flex; align-items: center;
+      border-left: 1px solid var(--border);
       gap: 10px;
     }
+    .schedule-task.break-slot { color: var(--muted); font-weight: 400; font-style: italic; }
+    .schedule-task.empty { color: var(--border); font-weight: 400; }
+    .schedule-task.highlight { color: var(--accent); }
+    .schedule-task.current-slot { background: rgba(232,197,71,0.06); }
 
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
+    .task-tag {
+      font-family: 'DM Mono', monospace; font-size: 9px;
+      padding: 2px 7px; letter-spacing: 0.08em; text-transform: uppercase;
+      border: 1px solid; flex-shrink: 0;
     }
+    .tag-admin { color: var(--blue); border-color: rgba(92,180,224,0.4); }
+    .tag-sales { color: var(--green); border-color: rgba(92,224,138,0.4); }
+    .tag-ops { color: var(--orange); border-color: rgba(224,149,92,0.4); }
+    .tag-focus { color: var(--accent); border-color: rgba(232,197,71,0.4); }
+    .tag-mgmt { color: var(--purple); border-color: rgba(160,92,224,0.4); }
 
-    /* === CENTRES STATUS === */
-    .centres-strip {
-      position: relative;
-      z-index: 10;
-      display: flex;
-      gap: 12px;
-      margin: 0 48px 36px;
-      flex-wrap: wrap;
+    /* NOTES SECTION WITHIN SCHEDULE */
+    .schedule-notes {
+      padding: 20px 28px; border-top: 2px solid var(--border); background: var(--bg);
     }
+    .notes-title { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
+    .notes-list { display: flex; flex-direction: column; gap: 6px; }
+    .note-item { font-size: 12px; color: var(--muted); padding-left: 12px; border-left: 2px solid var(--border); line-height: 1.5; }
+    .note-item strong { color: var(--text); font-weight: 600; }
 
-    .centre-pill {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      padding: 10px 16px;
-      cursor: default;
-      transition: border-color 0.2s;
-    }
-
-    .centre-pill:hover { border-color: var(--accent); }
-
-    .centre-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 6px var(--green);
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    .centre-dot.unmanned { background: var(--blue); box-shadow: 0 0 6px var(--blue); }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    .centre-name {
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-    }
-
-    .centre-ref {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      color: var(--muted);
-      letter-spacing: 0.05em;
-    }
-
-    /* === MAIN TOOLS GRID === */
-    .tools-grid {
-      position: relative;
-      z-index: 10;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin: 0 48px 36px;
-    }
-
-    .tool-card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      padding: 28px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      position: relative;
-      overflow: hidden;
-      text-decoration: none;
-      display: block;
-    }
-
-    .tool-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 3px; height: 0;
-      background: var(--accent);
-      transition: height 0.25s ease;
-    }
-
-    .tool-card:hover {
-      border-color: var(--accent);
-      background: var(--bg3);
-      transform: translateY(-2px);
-    }
-
+    /* TOOLS GRID */
+    .tools-grid { position: relative; z-index: 10; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 0 48px 36px; }
+    .tool-card { background: var(--bg2); border: 1px solid var(--border); padding: 28px; cursor: pointer; transition: all 0.2s ease; position: relative; overflow: hidden; text-decoration: none; display: block; }
+    .tool-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 0; background: var(--accent); transition: height 0.25s ease; }
+    .tool-card:hover { border-color: var(--accent); background: var(--bg3); transform: translateY(-2px); }
     .tool-card:hover::before { height: 100%; }
-
-    .tool-card-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-
-    .tool-icon {
-      width: 42px;
-      height: 42px;
-      background: rgba(232,197,71,0.08);
-      border: 1px solid rgba(232,197,71,0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-    }
-
-    .tool-badge {
-      font-family: 'DM Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 3px 8px;
-      border: 1px solid;
-    }
-
+    .tool-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+    .tool-icon { width: 42px; height: 42px; background: rgba(232,197,71,0.08); border: 1px solid rgba(232,197,71,0.15); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .tool-badge { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 8px; border: 1px solid; }
     .badge-html { color: var(--accent); border-color: rgba(232,197,71,0.3); }
-    .badge-xlsx { color: var(--green); border-color: rgba(92,224,138,0.3); }
-    .badge-ext { color: var(--blue); border-color: rgba(92,180,224,0.3); }
+    .tool-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+    .tool-desc { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); line-height: 1.6; }
+    .tool-arrow { position: absolute; bottom: 20px; right: 24px; font-size: 18px; color: var(--border); transition: all 0.2s; }
+    .tool-card:hover .tool-arrow { color: var(--accent); transform: translate(3px, -3px); }
 
-    .tool-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 6px;
-      letter-spacing: -0.3px;
-    }
-
-    .tool-desc {
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .tool-arrow {
-      position: absolute;
-      bottom: 20px;
-      right: 24px;
-      font-size: 18px;
-      color: var(--border);
-      transition: all 0.2s;
-    }
-
-    .tool-card:hover .tool-arrow {
-      color: var(--accent);
-      transform: translate(3px, -3px);
-    }
-
-    /* === QUICK LINKS === */
-    .links-grid {
-      position: relative;
-      z-index: 10;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin: 0 48px 36px;
-    }
-
-    .link-card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      padding: 16px 20px;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .link-card:hover {
-      border-color: var(--accent);
-      background: var(--bg3);
-    }
-
-    .link-icon {
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-
+    /* QUICK LINKS */
+    .links-grid { position: relative; z-index: 10; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 0 48px 36px; }
+    .link-card { background: var(--bg2); border: 1px solid var(--border); padding: 16px 20px; cursor: pointer; transition: all 0.2s; text-decoration: none; display: flex; align-items: center; gap: 12px; }
+    .link-card:hover { border-color: var(--accent); background: var(--bg3); }
+    .link-icon { font-size: 18px; flex-shrink: 0; }
     .link-info { flex: 1; min-width: 0; }
+    .link-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .link-url { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    .link-name {
-      font-size: 13px;
-      font-weight: 700;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .link-url {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      color: var(--muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    /* === INFO ROW === */
-    .info-row {
-      position: relative;
-      z-index: 10;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin: 0 48px 48px;
-    }
-
-    .info-card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      padding: 24px;
-    }
-
-    .info-card-title {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--accent);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-    }
-
-    .info-row-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 9px 0;
-      border-bottom: 1px solid var(--border);
-      gap: 12px;
-    }
-
+    /* INFO ROW */
+    .info-row { position: relative; z-index: 10; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 0 48px 48px; }
+    .info-card { background: var(--bg2); border: 1px solid var(--border); padding: 24px; }
+    .info-card-title { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px; }
+    .info-row-item { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); gap: 12px; }
     .info-row-item:last-child { border-bottom: none; }
+    .info-key { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
+    .info-val { font-size: 13px; font-weight: 600; text-align: right; }
 
-    .info-key {
-      font-size: 12px;
-      color: var(--muted);
-      font-family: 'DM Mono', monospace;
-    }
+    footer { position: relative; z-index: 10; padding: 20px 48px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .footer-text { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+    .footer-accent { color: var(--accent); font-weight: 500; }
 
-    .info-val {
-      font-size: 13px;
-      font-weight: 600;
-      text-align: right;
-    }
-
-    /* === FOOTER === */
-    footer {
-      position: relative;
-      z-index: 10;
-      padding: 20px 48px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .footer-text {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .footer-accent {
-      color: var(--accent);
-      font-weight: 500;
-    }
-
-    /* === MODAL === */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-    }
-
+    /* MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; align-items: center; justify-content: center; }
     .modal-overlay.active { display: flex; }
-
-    .modal {
-      background: var(--bg2);
-      border: 1px solid var(--accent);
-      width: 90vw;
-      max-width: 960px;
-      height: 80vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 24px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .modal-title {
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    .modal-close {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-size: 18px;
-      width: 32px;
-      height: 32px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-      font-family: 'Syne', sans-serif;
-    }
-
+    .modal { background: var(--bg2); border: 1px solid var(--accent); width: 90vw; max-width: 960px; height: 80vh; display: flex; flex-direction: column; }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid var(--border); }
+    .modal-title { font-size: 15px; font-weight: 700; }
+    .modal-close { background: none; border: 1px solid var(--border); color: var(--text); font-size: 18px; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; font-family: 'Syne', sans-serif; }
     .modal-close:hover { border-color: var(--accent); color: var(--accent); }
+    .modal-frame { flex: 1; width: 100%; border: none; background: var(--bg); }
 
-    .modal-frame {
-      flex: 1;
-      width: 100%;
-      border: none;
-      background: var(--bg);
-    }
-
-    /* === ANIMATIONS === */
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .tool-card, .link-card, .centre-pill, .info-card {
-      animation: fadeInUp 0.4s ease backwards;
-    }
-
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .tool-card, .link-card, .centre-pill, .info-card { animation: fadeInUp 0.4s ease backwards; }
     .tool-card:nth-child(1) { animation-delay: 0.05s; }
     .tool-card:nth-child(2) { animation-delay: 0.1s; }
     .tool-card:nth-child(3) { animation-delay: 0.15s; }
-    .link-card:nth-child(1) { animation-delay: 0.2s; }
-    .link-card:nth-child(2) { animation-delay: 0.24s; }
-    .link-card:nth-child(3) { animation-delay: 0.28s; }
-    .link-card:nth-child(4) { animation-delay: 0.32s; }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="logo-block">
-      <div class="logo-mark">
-        <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="2" y="2" width="10" height="10" fill="#0f0f0f"/>
-          <rect x="14" y="2" width="10" height="10" fill="#0f0f0f"/>
-          <rect x="2" y="14" width="10" height="10" fill="#0f0f0f"/>
-          <rect x="14" y="14" width="10" height="10" fill="#0f0f0f"/>
-        </svg>
-      </div>
-      <div class="logo-text">
-        <div class="logo-title">Spaces Norwich</div>
-        <div class="logo-sub">Ops Hub — Chris Michaels</div>
-      </div>
+<header>
+  <div class="logo-block">
+    <div class="logo-mark">
+      <svg viewBox="0 0 26 26" fill="none"><rect x="2" y="2" width="10" height="10" fill="#0f0f0f"/><rect x="14" y="2" width="10" height="10" fill="#0f0f0f"/><rect x="2" y="14" width="10" height="10" fill="#0f0f0f"/><rect x="14" y="14" width="10" height="10" fill="#0f0f0f"/></svg>
     </div>
-    <div class="header-right">
-      <div id="live-time">--:--</div>
-      <div id="live-date">Loading...</div>
+    <div class="logo-text">
+      <div class="logo-title">Spaces Norwich</div>
+      <div class="logo-sub">Ops Hub — Chris Michaels</div>
     </div>
-  </header>
+  </div>
+  <div class="header-right">
+    <div id="live-time">--:--</div>
+    <div id="live-date">Loading...</div>
+  </div>
+</header>
 
-  <div class="divider"></div>
+<div class="divider"></div>
 
-  <div class="section-label">Cluster Centres</div>
+<div class="section-label">Cluster Centres</div>
+<div class="centres-strip">
+  <div class="centre-pill"><div class="centre-dot"></div><div><div class="centre-name">Townshend House</div><div class="centre-ref">Norwich Digital Hub · 8536</div></div></div>
+  <div class="centre-pill"><div class="centre-dot"></div><div><div class="centre-name">Stannard Place</div><div class="centre-ref">18 Colegate · 71 / 7553</div></div></div>
+  <div class="centre-pill"><div class="centre-dot"></div><div><div class="centre-name">Independent House</div><div class="centre-ref">Norwich · 8959</div></div></div>
+  <div class="centre-pill"><div class="centre-dot unmanned"></div><div><div class="centre-name">Fastolf House</div><div class="centre-ref">Great Yarmouth · 10175 · Unmanned</div></div></div>
+</div>
 
-  <div class="centres-strip">
-    <div class="centre-pill">
-      <div class="centre-dot"></div>
-      <div>
-        <div class="centre-name">Townshend House</div>
-        <div class="centre-ref">Norwich Digital Hub · 8536</div>
-      </div>
+<div class="section-label">Daily Schedule</div>
+<div class="schedule-wrapper">
+  <div class="day-selector">
+    <button class="day-btn" onclick="selectDay('mon', this)">Monday</button>
+    <button class="day-btn" onclick="selectDay('tue', this)">Tuesday</button>
+    <button class="day-btn" onclick="selectDay('wed', this)">Wednesday</button>
+    <button class="day-btn" onclick="selectDay('thu', this)">Thursday</button>
+    <button class="day-btn" onclick="selectDay('fri', this)">Friday</button>
+  </div>
+
+  <!-- MONDAY -->
+  <div class="schedule-panel" id="panel-mon">
+    <div class="schedule-day-header">
+      <div class="schedule-day-title">Monday</div>
+      <div class="schedule-day-focus" style="color:var(--orange);border-color:rgba(224,149,92,0.4)">H&amp;S Day</div>
     </div>
-    <div class="centre-pill">
-      <div class="centre-dot"></div>
-      <div>
-        <div class="centre-name">Stannard Place</div>
-        <div class="centre-ref">18 Colegate · 71 / 7553</div>
-      </div>
+    <div class="schedule-grid">
+      <div class="schedule-row"><div class="schedule-time">08:00</div><div class="schedule-task highlight">OPEN</div></div>
+      <div class="schedule-row"><div class="schedule-time">08:30</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>TeamHub Check-Ins · Centre Emails · CDR Review</div></div>
+      <div class="schedule-row"><div class="schedule-time">09:00</div><div class="schedule-task"><span class="task-tag tag-sales">Sales</span>Saleshub New Enquiry Actions</div></div>
+      <div class="schedule-row"><div class="schedule-time">09:30</div><div class="schedule-task empty">-</div></div>
+      <div class="schedule-row"><div class="schedule-time">10:00</div><div class="schedule-task empty">-</div></div>
+      <div class="schedule-row"><div class="schedule-time">10:30</div><div class="schedule-task empty">-</div></div>
+      <div class="schedule-row"><div class="schedule-time">11:00</div><div class="schedule-task"><span class="task-tag tag-ops">Ops</span>H&amp;S Walk Centre</div></div>
+      <div class="schedule-row"><div class="schedule-time">11:30</div><div class="schedule-task"><span class="task-tag tag-ops">Ops</span>FM Tickets</div></div>
+      <div class="schedule-row"><div class="schedule-time">12:00</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>IT Tickets</div></div>
+      <div class="schedule-row"><div class="schedule-time">12:30</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>TeamHub Tickets</div></div>
+      <div class="schedule-row"><div class="schedule-time">13:00</div><div class="schedule-task break-slot">Break</div></div>
+      <div class="schedule-row"><div class="schedule-time">13:30</div><div class="schedule-task break-slot">Break</div></div>
+      <div class="schedule-row"><div class="schedule-time">14:00</div><div class="schedule-task"><span class="task-tag tag-sales">Sales</span>Saleshub Activities</div></div>
+      <div class="schedule-row"><div class="schedule-time">14:30</div><div class="schedule-task"><span class="task-tag tag-sales">Sales</span>Saleshub Activities</div></div>
+      <div class="schedule-row"><div class="schedule-time">15:00</div><div class="schedule-task empty">-</div></div>
+      <div class="schedule-row"><div class="schedule-time">15:30</div><div class="schedule-task empty">-</div></div>
+      <div class="schedule-row"><div class="schedule-time">16:00</div><div class="schedule-task empty">-</div></div>
+      <div class="schedule-row"><div class="schedule-time">16:30</div><div class="schedule-task empty">-</div></div>
+      <div class="schedule-row"><div class="schedule-time">17:30</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>TeamHub Check-Out</div></div>
+      <div class="schedule-row"><div class="schedule-time">18:00</div><div class="schedule-task highlight">CLOSE</div></div>
     </div>
-    <div class="centre-pill">
-      <div class="centre-dot"></div>
-      <div>
-        <div class="centre-name">Independent House</div>
-        <div class="centre-ref">Norwich · 8959</div>
-      </div>
-    </div>
-    <div class="centre-pill">
-      <div class="centre-dot unmanned"></div>
-      <div>
-        <div class="centre-name">Fastolf House</div>
-        <div class="centre-ref">Great Yarmouth · 10175 · Unmanned</div>
+    <div class="schedule-notes">
+      <div class="notes-title">Monday Notes</div>
+      <div class="notes-list">
+        <div class="note-item"><strong>Fire Test</strong> - Weekly fire alarm test</div>
+        <div class="note-item"><strong>Fire Evac</strong> - April and October</div>
+        <div class="note-item"><strong>H&S Weekly Audit Checks</strong></div>
+        <div class="note-item"><strong>Annual H&S Report</strong></div>
       </div>
     </div>
   </div>
 
-  <div class="section-label">Tools</div>
-
-  <div class="tools-grid">
-    <div class="tool-card" onclick="openTool('debt-chaser.html', 'Debt Chaser')">
-      <div class="tool-card-header">
-        <div class="tool-icon">💸</div>
-        <span class="tool-badge badge-html">HTML</span>
-      </div>
-      <div class="tool-title">Debt Chaser</div>
-      <div class="tool-desc">Drag-drop CSV/Excel input. Escalation tiers by days overdue. Daily accounts chasing for Norwich cluster.</div>
-      <div class="tool-arrow">↗</div>
+  <!-- TUESDAY -->
+  <div class="schedule-panel" id="panel-tue">
+    <div class="schedule-day-header">
+      <div class="schedule-day-title">Tuesday</div>
+      <div class="schedule-day-focus" style="color:var(--blue);border-color:rgba(92,180,224,0.4)">NPS Focus</div>
     </div>
-
-    <div class="tool-card" onclick="openTool('nps-followup.html', 'NPS Follow-Up')">
-      <div class="tool-card-header">
-        <div class="tool-icon">⭐</div>
-        <span class="tool-badge badge-html">HTML</span>
-      </div>
-      <div class="tool-title">NPS Follow-Up</div>
-      <div class="tool-desc">Non-responder tracking across all four Norwich centres. Survey chase management and status logging.</div>
-      <div class="tool-arrow">↗</div>
+    <div class="schedule-grid">
+      <div class="schedule-row"><div class="schedule-time">08:00</div><div class="schedule-task highlight">OPEN</div></div>
+      <div class="schedule-row"><div class="schedule-time">08:30</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>TeamHub Check-Ins · Centre Emails · CDR Review</div></div>
+      <div class="schedule-row"><div class="schedule-time">09:00</div><div class="schedule-task"><span class="task-tag tag-sales">Sales</span>Saleshub New Enquiry Actions</div></div>
+      <div class="schedule-row"><div class="schedule-time">09:30</div><div class="schedule-task empty">-</div></div>
+      <div class="schedule-row"><div class="schedule-time">10:00</div><div class="schedule-task"><span class="task-tag tag-focus">Focus</span>NPS Focus</div></div>
+      <div class="schedule-row"><div class="schedule-time">10:30</div><div class="schedule-task"><span class="task-tag tag-focus">Focus</span>NPS Focus</div></div>
+      <div class="schedule-row"><div class="schedule-time">11:00</div><div class="schedule-task"><span class="task-tag tag-ops">Ops</span>Standards Walk Centre</div></div>
+      <div class="schedule-row"><div class="schedule-time">11:30</div><div class="schedule-task"><span class="task-tag tag-ops">Ops</span>Standards Walk Centre</div></div>
+      <div class="schedule-row"><div class="schedule-time">12:00</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>IT Tickets</div></div>
+      <div class="schedule-row"><div class="schedule-time">12:30</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>TeamHub Tickets</div></div>
+      <div class="schedule-row"><div class="schedule-time">13:00</div><div class="schedule-task break-slot">Break</div></div>
+      <div class="schedule-row"><div class="schedule-time">13:30</div><div class="schedule-task break-slot">Break</div></div>
+      <div class="schedule-row"><div class="schedule-time">14:00</div><div class="schedule-task"><span class="task-tag tag-sales">Sales</span>Saleshub Activities</div></div>
+      <div class="schedule-row"><div class="schedule-time">14:30</div><div class="schedule-task"><span class="task-tag tag-sales">Sales</span>Saleshub Activities</div></div>
+      <div class="schedule-row"><div class="schedule-time">15:00</div><div class="schedule-task"><span class="task-tag tag-ops">Ops</span>Empty Office Audit &amp; Clean</div></div>
+      <div class="schedule-row"><div class="schedule-time">15:30</div><div class="schedule-task"><span class="task-tag tag-ops">Ops</span>Empty Office Audit &amp; Clean</div></div>
+      <div class="schedule-row"><div class="schedule-time">16:00</div><div class="schedule-task"><span class="task-tag tag-ops">Ops</span>FM Tickets</div></div>
+      <div class="schedule-row"><div class="schedule-time">16:30</div><div class="schedule-task empty">-</div></div>
+      <div class="schedule-row"><div class="schedule-time">17:30</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>TeamHub Check-Out</div></div>
+      <div class="schedule-row"><div class="schedule-time">18:00</div><div class="schedule-task highlight">CLOSE</div></div>
     </div>
-
-    <div class="tool-card" onclick="openTool('todo-hype.html', 'Daily Tasks')">
-      <div class="tool-card-header">
-        <div class="tool-icon">✅</div>
-        <span class="tool-badge badge-html">HTML</span>
-      </div>
-      <div class="tool-title">Daily Tasks</div>
-      <div class="tool-desc">Drag-drop .txt input, category tagging, hype messages. Your daily to-do command centre.</div>
-      <div class="tool-arrow">↗</div>
-    </div>
-  </div>
-
-  <div class="section-label">Quick Links</div>
-
-  <div class="links-grid">
-    <a class="link-card" href="https://myspacesworks.com" target="_blank">
-      <div class="link-icon">🏢</div>
-      <div class="link-info">
-        <div class="link-name">MySpacesworks</div>
-        <div class="link-url">myspacesworks.com</div>
-      </div>
-    </a>
-    <a class="link-card" href="https://go.eu.uniflowonline.com" target="_blank">
-      <div class="link-icon">🖨️</div>
-      <div class="link-info">
-        <div class="link-name">Canon Cloud Print</div>
-        <div class="link-url">go.eu.uniflowonline.com</div>
-      </div>
-    </a>
-    <a class="link-card" href="https://www.linkedin.com" target="_blank">
-      <div class="link-icon">💼</div>
-      <div class="link-info">
-        <div class="link-name">LinkedIn</div>
-        <div class="link-url">Hub posts & updates</div>
-      </div>
-    </a>
-    <a class="link-card" href="https://claude.ai" target="_blank">
-      <div class="link-icon">🤖</div>
-      <div class="link-info">
-        <div class="link-name">Claude</div>
-        <div class="link-url">claude.ai</div>
-      </div>
-    </a>
-  </div>
-
-  <div class="section-label">Reference</div>
-
-  <div class="info-row">
-    <div class="info-card">
-      <div class="info-card-title">Billing Cycle</div>
-      <div class="info-row-item">
-        <span class="info-key">Invoices generated</span>
-        <span class="info-val">1st of each month</span>
-      </div>
-      <div class="info-row-item">
-        <span class="info-key">Office fees (advance)</span>
-        <span class="info-val">Following month</span>
-      </div>
-      <div class="info-row-item">
-        <span class="info-key">Ancillary services</span>
-        <span class="info-val">In arrears</span>
-      </div>
-      <div class="info-row-item">
-        <span class="info-key">Payment due</span>
-        <span class="info-val">15th of month</span>
-      </div>
-      <div class="info-row-item">
-        <span class="info-key">Late payment charge</span>
-        <span class="info-val">8% of overdue balance</span>
-      </div>
-      <div class="info-row-item">
-        <span class="info-key">Failed payment fee</span>
-        <span class="info-val">£25</span>
-      </div>
-    </div>
-    <div class="info-card">
-      <div class="info-card-title">Key Contacts</div>
-      <div class="info-row-item">
-        <span class="info-key">City Manager</span>
-        <span class="info-val">Gareth Williams</span>
-      </div>
-      <div class="info-row-item">
-        <span class="info-key">Norfolk & Waveney Mind</span>
-        <span class="info-val">Sarah Ingram / Fiona O'Hara</span>
-      </div>
-      <div class="info-row-item">
-        <span class="info-key">CBRE / LBG</span>
-        <span class="info-val">Rachel Glenister</span>
-      </div>
-      <div class="info-row-item">
-        <span class="info-key">IWG Account</span>
-        <span class="info-val">John Irwin / Kira Hafner</span>
-      </div>
-      <div class="info-row-item">
-        <span class="info-key">Assembly Point</span>
-        <span class="info-val">Crown Road Car Park</span>
-      </div>
-      <div class="info-row-item">
-        <span class="info-key">Centre Phone</span>
-        <span class="info-val">01603 804 360</span>
+    <div class="schedule-notes">
+      <div class="notes-title">NPS Notes</div>
+      <div class="notes-list">
+        <div class="note-item"><strong>Review Non-Completed Surveys</strong> - Chase for response</div>
+        <div class="note-item"><strong>Rescore Survey where applicable</strong></div>
+        <div class="note-item">Review Positives - thank customers</div>
+        <div class="note-item">Review Neutral - discuss with customers</div>
+        <div class="note-item">Review Negative - discuss with customers</div>
       </div>
     </div>
   </div>
 
-  <footer>
-    <div class="footer-text">Spaces Norwich Digital Hub · Townshend House, 30 Crown Road, Norwich, NR1 3DT</div>
-    <div class="footer-text">Built with <span class="footer-accent">Claude</span> · The Cinematic Avenger Operations Division</div>
-  </footer>
-
-  <!-- MODAL -->
-  <div class="modal-overlay" id="modalOverlay" onclick="closeOnOverlay(event)">
-    <div class="modal">
-      <div class="modal-header">
-        <div class="modal-title" id="modalTitle">Tool</div>
-        <button class="modal-close" onclick="closeTool()">✕</button>
+  <!-- WEDNESDAY -->
+  <div class="schedule-panel" id="panel-wed">
+    <div class="schedule-day-header">
+      <div class="schedule-day-title">Wednesday</div>
+      <div class="schedule-day-focus" style="color:var(--green);border-color:rgba(92,224,138,0.4)">Retention Focus</div>
+    </div>
+    <div class="schedule-grid">
+      <div class="schedule-row"><div class="schedule-time">08:00</div><div class="schedule-task highlight">OPEN</div></div>
+      <div class="schedule-row"><div class="schedule-time">08:30</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>TeamHub Check-Ins · Centre Emails · CDR Review</div></div>
+      <div class="schedule-row"><div class="schedule-time">09:00</div><div class="schedule-task"><span class="task-tag tag-sales">Sales</span>Saleshub New Enquiry Actions</div></div>
+      <div class="schedule-row"><div class="schedule-time">09:30</div><div class="schedule-task empty">-</div></div>
+      <div class="schedule-row"><div class="schedule-time">10:00</div><div class="schedule-task"><span class="task-tag tag-focus">Focus</span>Retention Focus</div></div>
+      <div class="schedule-row"><div class="schedule-time">10:30</div><div class="schedule-task"><span class="task-tag tag-focus">Focus</span>Retention Focus</div></div>
+      <div class="schedule-row"><div class="schedule-time">11:00</div><div class="schedule-task empty">-</div></div>
+      <div class="schedule-row"><div class="schedule-time">11:30</div><div class="schedule-task"><span class="task-tag tag-ops">Ops</span>FM Tickets</div></div>
+      <div class="schedule-row"><div class="schedule-time">12:00</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>IT Tickets</div></div>
+      <div class="schedule-row"><div class="schedule-time">12:30</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>TeamHub Tickets</div></div>
+      <div class="schedule-row"><div class="schedule-time">13:00</div><div class="schedule-task break-slot">Break</div></div>
+      <div class="schedule-row"><div class="schedule-time">13:30</div><div class="schedule-task break-slot">Break</div></div>
+      <div class="schedule-row"><div class="schedule-time">14:00</div><div class="schedule-task"><span class="task-tag tag-sales">Sales</span>Saleshub Activities</div></div>
+      <div class="schedule-row"><div class="schedule-time">14:30</div><div class="schedule-task"><span class="task-tag tag-sales">Sales</span>Saleshub Activities</div></div>
+      <div class="schedule-row"><div class="schedule-time">15:00</div><div class="schedule-task empty">-</div></div>
+      <div class="schedule-row"><div class="schedule-time">15:30</div><div class="schedule-task empty">-</div></div>
+      <div class="schedule-row"><div class="schedule-time">16:00</div><div class="schedule-task empty">-</div></div>
+      <div class="schedule-row"><div class="schedule-time">16:30</div><div class="schedule-task empty">-</div></div>
+      <div class="schedule-row"><div class="schedule-time">17:30</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>TeamHub Check-Out</div></div>
+      <div class="schedule-row"><div class="schedule-time">18:00</div><div class="schedule-task highlight">CLOSE</div></div>
+    </div>
+    <div class="schedule-notes">
+      <div class="notes-title">Retention Notes</div>
+      <div class="notes-list">
+        <div class="note-item"><strong>Use Report to see Upcoming Renewals</strong></div>
+        <div class="note-item"><strong>Arrange Renewal meeting with client</strong></div>
+        <div class="note-item">Have T1 price to hand for renewal pricing, T2 for negotiation</div>
+        <div class="note-item">Look at alternative retention factors: Location, Price, Term, Room Type, Number of Team Members, Hybrid Options</div>
       </div>
-      <iframe class="modal-frame" id="modalFrame" src=""></iframe>
     </div>
   </div>
 
-  <script>
-    // Live clock
-    function updateClock() {
-      const now = new Date();
-      const time = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-      const date = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-      document.getElementById('live-time').textContent = time;
-      document.getElementById('live-date').textContent = date;
+  <!-- THURSDAY -->
+  <div class="schedule-panel" id="panel-thu">
+    <div class="schedule-day-header">
+      <div class="schedule-day-title">Thursday</div>
+      <div class="schedule-day-focus" style="color:var(--red);border-color:rgba(224,92,92,0.4)">Debt Focus</div>
+    </div>
+    <div class="schedule-grid">
+      <div class="schedule-row"><div class="schedule-time">08:00</div><div class="schedule-task highlight">OPEN</div></div>
+      <div class="schedule-row"><div class="schedule-time">08:30</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>TeamHub Check-Ins · Centre Emails · CDR Review</div></div>
+      <div class="schedule-row"><div class="schedule-time">09:00</div><div class="schedule-task"><span class="task-tag tag-sales">Sales</span>Saleshub New Enquiry Actions</div></div>
+      <div class="schedule-row"><div class="schedule-time">09:30</div><div class="schedule-task empty">-</div></div>
+      <div class="schedule-row"><div class="schedule-time">10:00</div><div class="schedule-task"><span class="task-tag tag-focus">Focus</span>Debt Focus</div></div>
+      <div class="schedule-row"><div class="schedule-time">10:30</div><div class="schedule-task"><span class="task-tag tag-focus">Focus</span>Debt Focus</div></div>
+      <div class="schedule-row"><div class="schedule-time">11:00</div><div class="schedule-task"><span class="task-tag tag-ops">Ops</span>Standards Walk Centre</div></div>
+      <div class="schedule-row"><div class="schedule-time">11:30</div><div class="schedule-task"><span class="task-tag tag-ops">Ops</span>Standards Walk Centre</div></div>
+      <div class="schedule-row"><div class="schedule-time">12:00</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>IT Tickets</div></div>
+      <div class="schedule-row"><div class="schedule-time">12:30</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>TeamHub Tickets</div></div>
+      <div class="schedule-row"><div class="schedule-time">13:00</div><div class="schedule-task break-slot">Break</div></div>
+      <div class="schedule-row"><div class="schedule-time">13:30</div><div class="schedule-task break-slot">Break</div></div>
+      <div class="schedule-row"><div class="schedule-time">14:00</div><div class="schedule-task"><span class="task-tag tag-sales">Sales</span>Saleshub Activities</div></div>
+      <div class="schedule-row"><div class="schedule-time">14:30</div><div class="schedule-task"><span class="task-tag tag-sales">Sales</span>Saleshub Activities</div></div>
+      <div class="schedule-row"><div class="schedule-time">15:00</div><div class="schedule-task"><span class="task-tag tag-ops">Ops</span>Empty Office Audit &amp; Clean</div></div>
+      <div class="schedule-row"><div class="schedule-time">15:30</div><div class="schedule-task"><span class="task-tag tag-ops">Ops</span>Empty Office Audit &amp; Clean</div></div>
+      <div class="schedule-row"><div class="schedule-time">16:00</div><div class="schedule-task"><span class="task-tag tag-ops">Ops</span>FM Tickets</div></div>
+      <div class="schedule-row"><div class="schedule-time">16:30</div><div class="schedule-task empty">-</div></div>
+      <div class="schedule-row"><div class="schedule-time">17:30</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>TeamHub Check-Out</div></div>
+      <div class="schedule-row"><div class="schedule-time">18:00</div><div class="schedule-task highlight">CLOSE</div></div>
+    </div>
+    <div class="schedule-notes">
+      <div class="notes-title">Debt / NLO Dates</div>
+      <div class="notes-list">
+        <div class="note-item"><strong>1st:</strong> Invoice Issued</div>
+        <div class="note-item"><strong>15th:</strong> Invoice Due</div>
+        <div class="note-item"><strong>20th:</strong> Reminder 1</div>
+        <div class="note-item"><strong>24th:</strong> Reminder 2</div>
+        <div class="note-item"><strong>1st (next):</strong> Reminder 3</div>
+        <div class="note-item"><strong>5th:</strong> Final Reminder</div>
+        <div class="note-item"><strong>10th:</strong> Lock Out</div>
+        <div class="note-item"><strong>17th:</strong> Abandoned Property Letter</div>
+        <div class="note-item"><strong>27th:</strong> Property Collection Deadline</div>
+        <div class="note-item"><strong>28th:</strong> Clear Office &amp; Reset</div>
+        <div class="note-item"><strong>1st (next):</strong> Ready to Resell</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FRIDAY -->
+  <div class="schedule-panel" id="panel-fri">
+    <div class="schedule-day-header">
+      <div class="schedule-day-title">Friday</div>
+      <div class="schedule-day-focus" style="color:var(--purple);border-color:rgba(160,92,224,0.4)">SBRR Focus</div>
+    </div>
+    <div class="schedule-grid">
+      <div class="schedule-row"><div class="schedule-time">08:00</div><div class="schedule-task highlight">OPEN</div></div>
+      <div class="schedule-row"><div class="schedule-time">08:30</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>TeamHub Check-Ins · Centre Emails · CDR Review</div></div>
+      <div class="schedule-row"><div class="schedule-time">09:00</div><div class="schedule-task"><span class="task-tag tag-sales">Sales</span>Saleshub New Enquiry Actions</div></div>
+      <div class="schedule-row"><div class="schedule-time">09:30</div><div class="schedule-task empty">-</div></div>
+      <div class="schedule-row"><div class="schedule-time">10:00</div><div class="schedule-task"><span class="task-tag tag-focus">Focus</span>SBRR Focus</div></div>
+      <div class="schedule-row"><div class="schedule-time">10:30</div><div class="schedule-task"><span class="task-tag tag-focus">Focus</span>SBRR Focus</div></div>
+      <div class="schedule-row"><div class="schedule-time">11:00</div><div class="schedule-task"><span class="task-tag tag-ops">Ops</span>VO Post - Weekly (Monthly on last Friday)</div></div>
+      <div class="schedule-row"><div class="schedule-time">11:30</div><div class="schedule-task"><span class="task-tag tag-ops">Ops</span>FM Tickets</div></div>
+      <div class="schedule-row"><div class="schedule-time">12:00</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>IT Tickets</div></div>
+      <div class="schedule-row"><div class="schedule-time">12:30</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>TeamHub Tickets</div></div>
+      <div class="schedule-row"><div class="schedule-time">13:00</div><div class="schedule-task break-slot">Break</div></div>
+      <div class="schedule-row"><div class="schedule-time">13:30</div><div class="schedule-task break-slot">Break</div></div>
+      <div class="schedule-row"><div class="schedule-time">14:00</div><div class="schedule-task"><span class="task-tag tag-sales">Sales</span>Saleshub Activities</div></div>
+      <div class="schedule-row"><div class="schedule-time">14:30</div><div class="schedule-task"><span class="task-tag tag-sales">Sales</span>Saleshub Activities</div></div>
+      <div class="schedule-row"><div class="schedule-time">15:00</div><div class="schedule-task"><span class="task-tag tag-mgmt">Mgmt</span>Bitesize w/ Chris Taylor - City Manager</div></div>
+      <div class="schedule-row"><div class="schedule-time">15:30</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>HR Requests</div></div>
+      <div class="schedule-row"><div class="schedule-time">16:00</div><div class="schedule-task"><span class="task-tag tag-ops">Ops</span>H&S Audit Check</div></div>
+      <div class="schedule-row"><div class="schedule-time">16:30</div><div class="schedule-task"><span class="task-tag tag-mgmt">Mgmt</span>Credit Clinic w/ Chris Taylor - City Manager</div></div>
+      <div class="schedule-row"><div class="schedule-time">17:30</div><div class="schedule-task"><span class="task-tag tag-admin">Admin</span>TeamHub Check-Out</div></div>
+      <div class="schedule-row"><div class="schedule-time">18:00</div><div class="schedule-task highlight">CLOSE</div></div>
+    </div>
+    <div class="schedule-notes">
+      <div class="notes-title">SBRR Notes</div>
+      <div class="notes-list">
+        <div class="note-item"><strong>Colliers will contact client direct with LOA Form</strong></div>
+        <div class="note-item">After 2 attempts with no reply - LOA sent to Centre email</div>
+        <div class="note-item"><strong>Centre to chase client for signature and return to Colliers</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-label">Tools</div>
+<div class="tools-grid">
+  <div class="tool-card" onclick="openTool('debt-chaser.html', 'Debt Chaser')">
+    <div class="tool-card-header"><div class="tool-icon">💸</div><span class="tool-badge badge-html">HTML</span></div>
+    <div class="tool-title">Debt Chaser</div>
+    <div class="tool-desc">Drag-drop CSV/Excel input. Escalation tiers by days overdue.</div>
+    <div class="tool-arrow">↗</div>
+  </div>
+  <div class="tool-card" onclick="openTool('nps-followup.html', 'NPS Follow-Up')">
+    <div class="tool-card-header"><div class="tool-icon">⭐</div><span class="tool-badge badge-html">HTML</span></div>
+    <div class="tool-title">NPS Follow-Up</div>
+    <div class="tool-desc">Non-responder tracking across all four Norwich centres.</div>
+    <div class="tool-arrow">↗</div>
+  </div>
+  <div class="tool-card" onclick="openTool('todo-hype.html', 'Daily Tasks')">
+    <div class="tool-card-header"><div class="tool-icon">✅</div><span class="tool-badge badge-html">HTML</span></div>
+    <div class="tool-title">Daily Tasks</div>
+    <div class="tool-desc">Drag-drop .txt input, category tagging, hype messages.</div>
+    <div class="tool-arrow">↗</div>
+  </div>
+</div>
+
+<div class="section-label">Quick Links</div>
+<div class="links-grid">
+  <a class="link-card" href="https://myspacesworks.com" target="_blank"><div class="link-icon">🏢</div><div class="link-info"><div class="link-name">MySpacesworks</div><div class="link-url">myspacesworks.com</div></div></a>
+  <a class="link-card" href="https://go.eu.uniflowonline.com" target="_blank"><div class="link-icon">🖨️</div><div class="link-info"><div class="link-name">Canon Cloud Print</div><div class="link-url">go.eu.uniflowonline.com</div></div></a>
+  <a class="link-card" href="https://www.linkedin.com" target="_blank"><div class="link-icon">💼</div><div class="link-info"><div class="link-name">LinkedIn</div><div class="link-url">Hub posts & updates</div></div></a>
+  <a class="link-card" href="https://claude.ai" target="_blank"><div class="link-icon">🤖</div><div class="link-info"><div class="link-name">Claude</div><div class="link-url">claude.ai</div></div></a>
+</div>
+
+<div class="section-label">Reference</div>
+<div class="info-row">
+  <div class="info-card">
+    <div class="info-card-title">Billing Cycle</div>
+    <div class="info-row-item"><span class="info-key">Invoices generated</span><span class="info-val">1st of each month</span></div>
+    <div class="info-row-item"><span class="info-key">Office fees (advance)</span><span class="info-val">Following month</span></div>
+    <div class="info-row-item"><span class="info-key">Ancillary services</span><span class="info-val">In arrears</span></div>
+    <div class="info-row-item"><span class="info-key">Payment due</span><span class="info-val">15th of month</span></div>
+    <div class="info-row-item"><span class="info-key">Late payment charge</span><span class="info-val">8% of overdue balance</span></div>
+    <div class="info-row-item"><span class="info-key">Failed payment fee</span><span class="info-val">£25</span></div>
+  </div>
+  <div class="info-card">
+    <div class="info-card-title">Key Contacts</div>
+    <div class="info-row-item"><span class="info-key">City Manager</span><span class="info-val">Gareth Williams</span></div>
+    <div class="info-row-item"><span class="info-key">Norfolk & Waveney Mind</span><span class="info-val">Sarah Ingram / Fiona O'Hara</span></div>
+    <div class="info-row-item"><span class="info-key">CBRE / LBG</span><span class="info-val">Rachel Glenister</span></div>
+    <div class="info-row-item"><span class="info-key">IWG Account</span><span class="info-val">John Irwin / Kira Hafner</span></div>
+    <div class="info-row-item"><span class="info-key">Assembly Point</span><span class="info-val">Crown Road Car Park</span></div>
+    <div class="info-row-item"><span class="info-key">Centre Phone</span><span class="info-val">01603 804 360</span></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-text">Spaces Norwich Digital Hub · Townshend House, 30 Crown Road, Norwich, NR1 3DT</div>
+  <div class="footer-text">Built with <span class="footer-accent">Claude</span> · The Cinematic Avenger Operations Division</div>
+</footer>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeOnOverlay(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Tool</div>
+      <button class="modal-close" onclick="closeTool()">✕</button>
+    </div>
+    <iframe class="modal-frame" id="modalFrame" src=""></iframe>
+  </div>
+</div>
+
+<script>
+  // Clock
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('live-time').textContent = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('live-date').textContent = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // Auto-open today's day
+  const days = ['sun','mon','tue','wed','thu','fri','sat'];
+  const todayKey = days[new Date().getDay()];
+  const todayBtn = document.querySelector(`.day-btn[onclick*="'${todayKey}'"]`);
+  if (todayBtn) todayBtn.click();
+
+  // Day selector
+  function selectDay(day, btn) {
+    document.querySelectorAll('.schedule-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    const panel = document.getElementById('panel-' + day);
+    if (panel) {
+      panel.classList.add('active');
+      btn.classList.add('active');
+      // Highlight current time slot
+      highlightCurrentSlot();
     }
-    updateClock();
-    setInterval(updateClock, 1000);
+  }
 
-    // Tool modal
-    function openTool(file, title) {
-      document.getElementById('modalTitle').textContent = title;
-      document.getElementById('modalFrame').src = file;
-      document.getElementById('modalOverlay').classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeTool() {
-      document.getElementById('modalOverlay').classList.remove('active');
-      document.getElementById('modalFrame').src = '';
-      document.body.style.overflow = '';
-    }
-
-    function closeOnOverlay(e) {
-      if (e.target === document.getElementById('modalOverlay')) closeTool();
-    }
-
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeTool();
+  function highlightCurrentSlot() {
+    document.querySelectorAll('.schedule-task').forEach(t => t.classList.remove('current-slot'));
+    const now = new Date();
+    const todayKey2 = days[now.getDay()];
+    const activePanel = document.querySelector('.schedule-panel.active');
+    if (!activePanel) return;
+    const panelDay = activePanel.id.replace('panel-', '');
+    if (panelDay !== todayKey2) return;
+    const currentMins = now.getHours() * 60 + now.getMinutes();
+    const timeEls = activePanel.querySelectorAll('.schedule-time');
+    let closest = null, closestDiff = Infinity;
+    timeEls.forEach(el => {
+      const [h, m] = el.textContent.trim().split(':').map(Number);
+      const diff = currentMins - (h * 60 + m);
+      if (diff >= 0 && diff < closestDiff) { closestDiff = diff; closest = el; }
     });
-  </script>
+    if (closest && closestDiff < 60) {
+      const task = closest.nextElementSibling;
+      if (task) task.classList.add('current-slot');
+    }
+  }
+
+  // Tool modal
+  function openTool(file, title) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalFrame').src = file;
+    document.getElementById('modalOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeTool() {
+    document.getElementById('modalOverlay').classList.remove('active');
+    document.getElementById('modalFrame').src = '';
+    document.body.style.overflow = '';
+  }
+  function closeOnOverlay(e) { if (e.target === document.getElementById('modalOverlay')) closeTool(); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeTool(); });
+</script>
 </body>
 </html>
