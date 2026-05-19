@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email Templates — Spaces Norwich</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f0f;
+  --surface: #1a1a1a;
+  --surface2: #222;
+  --border: #2e2e2e;
+  --text: #f0ede8;
+  --muted: #888;
+  --accent: #e8c547;
+  --green: #4ade80;
+  --red: #f87171;
+  --orange: #fb923c;
+  --blue: #60a5fa;
+  --purple: #e879f9;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; min-height: 100vh; }
+
+header {
+  border-bottom: 1px solid var(--border);
+  padding: 20px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; background: var(--bg); z-index: 100;
+}
+.logo { font-size: 13px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); }
+.header-date { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
+
+.main { max-width: 1100px; margin: 0 auto; padding: 40px 32px 80px; }
+
+.hero { margin-bottom: 48px; }
+h1 { font-size: clamp(28px, 4vw, 44px); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; }
+h1 span { color: var(--accent); }
+.subtitle { margin-top: 10px; color: var(--muted); font-size: 14px; font-family: 'DM Mono', monospace; }
+
+/* Category filters */
+.filters {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 36px; align-items: center;
+}
+.filter-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); margin-right: 4px; }
+.filter-btn {
+  font-family: 'DM Mono', monospace; font-size: 11px; padding: 6px 16px;
+  border: 1px solid var(--border); background: transparent; color: var(--muted);
+  cursor: pointer; transition: all 0.15s; letter-spacing: 0.04em; border-radius: 0;
+}
+.filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+.filter-btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
+
+/* Template cards */
+.templates-grid { display: flex; flex-direction: column; gap: 20px; }
+
+.template-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: border-color 0.2s;
+}
+.template-card:hover { border-color: #444; }
+
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px; cursor: pointer; gap: 16px;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+.template-card.open .card-header { border-bottom-color: var(--border); }
+
+.card-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
+
+.cat-badge {
+  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 700;
+  padding: 4px 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  white-space: nowrap; flex-shrink: 0; border: 1px solid;
+}
+
+.template-name { font-size: 16px; font-weight: 700; }
+.template-desc { font-size: 12px; color: var(--muted); margin-top: 2px; font-family: 'DM Mono', monospace; }
+
+.chevron {
+  color: var(--muted); font-size: 18px; transition: transform 0.2s; flex-shrink: 0;
+}
+.template-card.open .chevron { transform: rotate(180deg); }
+
+/* Card body */
+.card-body { display: none; padding: 24px; }
+.template-card.open .card-body { display: block; }
+
+.template-section { margin-bottom: 20px; }
+.template-section:last-child { margin-bottom: 0; }
+
+.section-label {
+  font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent);
+  letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px;
+}
+
+.email-meta {
+  font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted);
+  padding: 10px 14px; background: var(--surface2); border: 1px solid var(--border);
+  margin-bottom: 2px; line-height: 1.7;
+}
+
+.email-body-wrap {
+  position: relative;
+}
+
+.email-body {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  color: var(--text);
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.copy-row {
+  display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;
+}
+
+.copy-btn {
+  font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 600;
+  padding: 8px 18px; border: 1px solid var(--accent); background: transparent;
+  color: var(--accent); cursor: pointer; transition: all 0.15s; letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.copy-btn:hover { background: var(--accent); color: #000; }
+.copy-btn.copied { background: var(--green); border-color: var(--green); color: #000; }
+
+.copy-btn-secondary {
+  font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 600;
+  padding: 8px 18px; border: 1px solid var(--border); background: transparent;
+  color: var(--muted); cursor: pointer; transition: all 0.15s; letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.copy-btn-secondary:hover { border-color: var(--muted); color: var(--text); }
+.copy-btn-secondary.copied { border-color: var(--green); color: var(--green); }
+
+/* Placeholder note */
+.placeholder-note {
+  font-family: 'DM Mono', monospace; font-size: 11px; color: var(--orange);
+  padding: 8px 12px; border: 1px solid rgba(251,146,60,0.3); background: rgba(251,146,60,0.05);
+  margin-top: 8px;
+}
+
+/* Scrollbar */
+.email-body::-webkit-scrollbar { width: 4px; }
+.email-body::-webkit-scrollbar-track { background: var(--surface2); }
+.email-body::-webkit-scrollbar-thumb { background: var(--border); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Spaces Norwich — Email Templates</div>
+  <div class="header-date" id="todayDate"></div>
+</header>
+
+<div class="main">
+  <div class="hero">
+    <h1>Email <span>Templates</span></h1>
+    <div class="subtitle">All your recurring email templates in one place. Click to expand, copy subject or body.</div>
+  </div>
+
+  <div class="filters">
+    <span class="filter-label">Filter:</span>
+    <button class="filter-btn active" onclick="filterCards('all', this)">All</button>
+    <button class="filter-btn" onclick="filterCards('renewal', this)">Renewal</button>
+    <button class="filter-btn" onclick="filterCards('offboarding', this)">Offboarding</button>
+    <button class="filter-btn" onclick="filterCards('debt', this)">Debt</button>
+    <button class="filter-btn" onclick="filterCards('nps', this)">NPS</button>
+    <button class="filter-btn" onclick="filterCards('welcome', this)">Welcome</button>
+    <button class="filter-btn" onclick="filterCards('retention', this)">Retention</button>
+    <button class="filter-btn" onclick="filterCards('fastolf', this)">Fastolf</button>
+    <button class="filter-btn" onclick="filterCards('admin', this)">Admin</button>
+  </div>
+
+  <div class="templates-grid" id="templatesGrid">
+
+    <!-- ===== RENEWAL ===== -->
+    <div class="template-card" data-cat="renewal">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <span class="cat-badge" style="color:var(--blue);border-color:rgba(96,165,250,0.4)">Renewal</span>
+          <div>
+            <div class="template-name">Renewal Reminder</div>
+            <div class="template-desc">Standard renewal notice with notice period deadline</div>
+          </div>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="template-section">
+          <div class="section-label">Subject</div>
+          <div class="email-meta" id="sub-renewal-1">Your Agreement at Spaces Norwich - Upcoming Renewal</div>
+          <div class="copy-row"><button class="copy-btn-secondary" onclick="copyEl('sub-renewal-1', this)">Copy subject</button></div>
+        </div>
+        <div class="template-section">
+          <div class="section-label">Body</div>
+          <div class="email-body-wrap">
+            <div class="email-body" id="body-renewal-1">Hi [CLIENT NAME],
+
+I hope you're well.
+
+I just wanted to make you aware that your current [TERM] agreement is due to come up for renewal on [RENEWAL DATE].
+
+Under the terms and conditions of the agreement, a minimum of [NOTICE PERIOD] notice is required should you decide not to renew. This means the cut-off date for notice would be [NOTICE DEADLINE]. If notice isn't given by then, the agreement would automatically renew.
+
+It would be great to catch up ahead of time so [ACCOUNT MANAGER] can run through the renewal options, pricing, and any alternatives that might better suit you going forward.
+
+Let me know when you're free for a quick chat and I'll get something in the diary.
+
+Speak soon,
+Chris</div>
+          </div>
+          <div class="placeholder-note">Placeholders: [CLIENT NAME] [TERM] [RENEWAL DATE] [NOTICE PERIOD] [NOTICE DEADLINE] [ACCOUNT MANAGER]</div>
+          <div class="copy-row"><button class="copy-btn" onclick="copyEl('body-renewal-1', this)">Copy email body</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== OFFBOARDING ===== -->
+    <div class="template-card" data-cat="offboarding">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <span class="cat-badge" style="color:var(--orange);border-color:rgba(251,146,60,0.4)">Offboarding</span>
+          <div>
+            <div class="template-name">Departure Confirmation</div>
+            <div class="template-desc">Agreement end - all offboarding obligations covered</div>
+          </div>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="template-section">
+          <div class="section-label">Subject</div>
+          <div class="email-meta" id="sub-offboard-1">Your Agreement at Spaces Norwich - End of [MONTH]</div>
+          <div class="copy-row"><button class="copy-btn-secondary" onclick="copyEl('sub-offboard-1', this)">Copy subject</button></div>
+        </div>
+        <div class="template-section">
+          <div class="section-label">Body</div>
+          <div class="email-body-wrap">
+            <div class="email-body" id="body-offboard-1">Hi [CLIENT NAME],
+
+Just a friendly heads-up as we're approaching the end of your agreement with us on [END DATE] - we want to make sure your departure goes as smoothly as possible!
+
+A few things to be aware of as you get ready to move on:
+
+Vacating your space - your accommodation will need to be cleared and left in the same condition as when you moved in. Anything left behind after your end date may be disposed of at your cost, so worth doing a thorough sweep!
+
+Office restoration and decoration - as per our terms and conditions, a standard restoration fee will be applied on departure. If the room needs any redecoration, you're welcome to sort that yourselves before your last day - otherwise additional charges may apply for any work needed above and beyond normal wear and tear.
+
+Access devices - please make sure any keys, cards or fobs are returned to us before or on your last day.
+
+Address usage - if you're using our address anywhere as your business or legal address, please make sure this is updated within 10 working days of your agreement ending.
+
+Retainer/deposit - once your agreement has ended and your account is fully settled, you can request the return of your retainer through your online account. This is processed within 30 days of that request.
+
+It's been a genuine pleasure having you as part of the hub community - we wish you all the best with whatever comes next. Don't hesitate to get in touch if you have any questions before [END DATE]!
+
+Chris
+Community Manager, Spaces Norwich Digital Hub
+01603 804360 (WhatsApp)</div>
+          </div>
+          <div class="placeholder-note">Placeholders: [CLIENT NAME] [END DATE] [MONTH]</div>
+          <div class="copy-row"><button class="copy-btn" onclick="copyEl('body-offboard-1', this)">Copy email body</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== RETENTION ===== -->
+    <div class="template-card" data-cat="retention">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <span class="cat-badge" style="color:var(--green);border-color:rgba(74,222,128,0.4)">Retention</span>
+          <div>
+            <div class="template-name">Retention - Alternative Space Offer</div>
+            <div class="template-desc">Hail mary before departure - pitch Colegate / alternative</div>
+          </div>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="template-section">
+          <div class="section-label">Subject</div>
+          <div class="email-meta" id="sub-retain-1">Before You Go - Something Worth Knowing</div>
+          <div class="copy-row"><button class="copy-btn-secondary" onclick="copyEl('sub-retain-1', this)">Copy subject</button></div>
+        </div>
+        <div class="template-section">
+          <div class="section-label">Body</div>
+          <div class="email-body-wrap">
+            <div class="email-body" id="body-retain-1">Hi [CLIENT NAME],
+
+We know you've got your plans in place for [END DATE], and we totally respect that - but we'd kick ourselves if we didn't mention this before you go.
+
+We have [OFFICE DESCRIPTION] available at [LOCATION] at [PRICING DETAIL] right now, and honestly, they could be a great fit for [REASON IT SUITS THEM].
+
+If there's even a small chance it's worth a conversation, we'd love to have it - no pressure, no hard sell, just a proper chat about whether it works for you.
+
+Drop us a reply or give us a call and we'll sort a time to show you round.
+
+Chris
+Community Manager, Spaces Norwich Digital Hub
+01603 804360 (WhatsApp)</div>
+          </div>
+          <div class="placeholder-note">Placeholders: [CLIENT NAME] [END DATE] [OFFICE DESCRIPTION] [LOCATION] [PRICING DETAIL] [REASON IT SUITS THEM]</div>
+          <div class="copy-row"><button class="copy-btn" onclick="copyEl('body-retain-1', this)">Copy email body</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DEBT - CHASER 1 ===== -->
+    <div class="template-card" data-cat="debt">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <span class="cat-badge" style="color:var(--green);border-color:rgba(74,222,128,0.4)">Debt</span>
+          <div>
+            <div class="template-name">Chaser 1 - Friendly Nudge (1-9 days)</div>
+            <div class="template-desc">First overdue reminder, warm tone</div>
+          </div>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="template-section">
+          <div class="section-label">Subject</div>
+          <div class="email-meta" id="sub-debt-1">Outstanding Invoice - [INVOICE NUMBER]</div>
+          <div class="copy-row"><button class="copy-btn-secondary" onclick="copyEl('sub-debt-1', this)">Copy subject</button></div>
+        </div>
+        <div class="template-section">
+          <div class="section-label">Body</div>
+          <div class="email-body-wrap">
+            <div class="email-body" id="body-debt-1">Hi [NAME],
+
+I hope you are well.
+
+This is just a quick reminder that invoice [INVOICE NUMBER] is now overdue. Please ensure this is paid, with proof of payment provided, or you may incur a late payment fee.
+
+If you have already paid this, please provide proof of payment so we can chase allocation to your account.
+
+Thanks,
+Chris</div>
+          </div>
+          <div class="placeholder-note">Placeholders: [NAME] [INVOICE NUMBER]</div>
+          <div class="copy-row"><button class="copy-btn" onclick="copyEl('body-debt-1', this)">Copy email body</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DEBT - CHASER 2 ===== -->
+    <div class="template-card" data-cat="debt">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <span class="cat-badge" style="color:#facc15;border-color:rgba(250,204,21,0.4)">Debt</span>
+          <div>
+            <div class="template-name">Chaser 2 - Follow Up (10-15 days)</div>
+            <div class="template-desc">Second reminder, slightly firmer</div>
+          </div>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="template-section">
+          <div class="section-label">Subject</div>
+          <div class="email-meta" id="sub-debt-2">Outstanding Invoice - [INVOICE NUMBER]</div>
+          <div class="copy-row"><button class="copy-btn-secondary" onclick="copyEl('sub-debt-2', this)">Copy subject</button></div>
+        </div>
+        <div class="template-section">
+          <div class="section-label">Body</div>
+          <div class="email-body-wrap">
+            <div class="email-body" id="body-debt-2">Hi [NAME],
+
+I hope you are well.
+
+This is just another quick reminder that invoice [INVOICE NUMBER] is now overdue. Please ensure this is paid, with proof of payment provided, or you will incur a late payment fee.
+
+If you have already paid this, please provide proof of payment so we can chase allocation to your account.
+
+Thanks,
+Chris</div>
+          </div>
+          <div class="placeholder-note">Placeholders: [NAME] [INVOICE NUMBER]</div>
+          <div class="copy-row"><button class="copy-btn" onclick="copyEl('body-debt-2', this)">Copy email body</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DEBT - CHASER 3 ===== -->
+    <div class="template-card" data-cat="debt">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <span class="cat-badge" style="color:var(--orange);border-color:rgba(251,146,60,0.4)">Debt</span>
+          <div>
+            <div class="template-name">Chaser 3 - Seriously Overdue (16-20 days)</div>
+            <div class="template-desc">Services restriction warning</div>
+          </div>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="template-section">
+          <div class="section-label">Subject</div>
+          <div class="email-meta" id="sub-debt-3">Outstanding Invoice - [INVOICE NUMBER]</div>
+          <div class="copy-row"><button class="copy-btn-secondary" onclick="copyEl('sub-debt-3', this)">Copy subject</button></div>
+        </div>
+        <div class="template-section">
+          <div class="section-label">Body</div>
+          <div class="email-body-wrap">
+            <div class="email-body" id="body-debt-3">Hi [NAME],
+
+I hope you are well.
+
+This is just a quick reminder that invoice [INVOICE NUMBER] is now seriously overdue. Please ensure this is paid, with proof of payment provided, or you may have your services restricted.
+
+If you have already paid this, please provide proof of payment so we can chase allocation to your account.
+
+Thanks,
+Chris</div>
+          </div>
+          <div class="placeholder-note">Placeholders: [NAME] [INVOICE NUMBER]</div>
+          <div class="copy-row"><button class="copy-btn" onclick="copyEl('body-debt-3', this)">Copy email body</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DEBT - FINAL CHASER ===== -->
+    <div class="template-card" data-cat="debt">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <span class="cat-badge" style="color:var(--red);border-color:rgba(248,113,113,0.4)">Debt</span>
+          <div>
+            <div class="template-name">Final Chaser - Account Restriction (21-25 days)</div>
+            <div class="template-desc">Hard deadline, account will be restricted</div>
+          </div>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="template-section">
+          <div class="section-label">Subject</div>
+          <div class="email-meta" id="sub-debt-4">Action Required - Outstanding Invoice [INVOICE NUMBER]</div>
+          <div class="copy-row"><button class="copy-btn-secondary" onclick="copyEl('sub-debt-4', this)">Copy subject</button></div>
+        </div>
+        <div class="template-section">
+          <div class="section-label">Body</div>
+          <div class="email-body-wrap">
+            <div class="email-body" id="body-debt-4">Hi [NAME],
+
+I hope you are well.
+
+This is just a quick reminder that invoice [INVOICE NUMBER] is now seriously overdue. Please ensure this is paid, with proof of payment provided, by the 10th, or your account will be restricted.
+
+If you have already paid this, please provide proof of payment so we can chase allocation to your account.
+
+Thanks,
+Chris</div>
+          </div>
+          <div class="placeholder-note">Placeholders: [NAME] [INVOICE NUMBER]</div>
+          <div class="copy-row"><button class="copy-btn" onclick="copyEl('body-debt-4', this)">Copy email body</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DEBT - LOCK OUT ===== -->
+    <div class="template-card" data-cat="debt">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <span class="cat-badge" style="color:var(--purple);border-color:rgba(232,121,249,0.4)">Debt</span>
+          <div>
+            <div class="template-name">Lock Out Notice (26+ days)</div>
+            <div class="template-desc">Account restricted, debt collectors warning</div>
+          </div>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="template-section">
+          <div class="section-label">Subject</div>
+          <div class="email-meta" id="sub-debt-5">Account Restricted - Outstanding Balance [BALANCE]</div>
+          <div class="copy-row"><button class="copy-btn-secondary" onclick="copyEl('sub-debt-5', this)">Copy subject</button></div>
+        </div>
+        <div class="template-section">
+          <div class="section-label">Body</div>
+          <div class="email-body-wrap">
+            <div class="email-body" id="body-debt-5">Hi [NAME],
+
+I hope you are well.
+
+Due to non-payment of invoice [INVOICE NUMBER], your account has been restricted. If you wish to have it reinstated, please clear the outstanding balance of [BALANCE] on your account and provide proof of payment.
+
+Failure to do so will mean your account will be passed to debt collectors.
+
+Thanks,
+Chris</div>
+          </div>
+          <div class="placeholder-note">Placeholders: [NAME] [INVOICE NUMBER] [BALANCE]</div>
+          <div class="copy-row"><button class="copy-btn" onclick="copyEl('body-debt-5', this)">Copy email body</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DEBT - RETAINER OUTSTANDING / ACCESS BLOCKED ===== -->
+    <div class="template-card" data-cat="debt">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <span class="cat-badge" style="color:var(--orange);border-color:rgba(251,146,60,0.4)">Debt</span>
+          <div>
+            <div class="template-name">Retainer/Deposit Outstanding - Access Blocked</div>
+            <div class="template-desc">New tenant - deposit unpaid, can't hand over keys</div>
+          </div>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="template-section">
+          <div class="section-label">Subject</div>
+          <div class="email-meta" id="sub-debt-6">Invoice [INVOICE NUMBER] - Retainer/Deposit Outstanding</div>
+          <div class="copy-row"><button class="copy-btn-secondary" onclick="copyEl('sub-debt-6', this)">Copy subject</button></div>
+        </div>
+        <div class="template-section">
+          <div class="section-label">Body</div>
+          <div class="email-body-wrap">
+            <div class="email-body" id="body-debt-6">Hi [NAME],
+
+I hope you are well.
+
+Thank you for your recent payment - this has been received and covers your office charges.
+
+I'm getting in touch as your agreement with us starts on [START DATE], and we're looking forward to welcoming you to Spaces Norwich Digital Hub. However, before we are able to provide access to your offices, invoice [INVOICE NUMBER] for [AMOUNT] (your retainer/deposit) needs to be settled. As this was due on [DUE DATE], we do need this cleared immediately to avoid any delay to your move-in.
+
+Please arrange payment as soon as possible using invoice number [INVOICE NUMBER] as your payment reference, and send proof of payment to this email address once done.
+
+Once we have confirmation of payment, our City Manager Gareth Williams will be in touch to arrange your onboarding and get you all set up - so the sooner we can get this resolved, the sooner we can get you through the door!
+
+If you have any questions in the meantime, please don't hesitate to get in touch.
+
+Thanks,
+Chris
+Community Manager, Spaces Norwich Digital Hub
+01603 804360 (WhatsApp)</div>
+          </div>
+          <div class="placeholder-note">Placeholders: [NAME] [START DATE] [INVOICE NUMBER] [AMOUNT] [DUE DATE]</div>
+          <div class="copy-row"><button class="copy-btn" onclick="copyEl('body-debt-6', this)">Copy email body</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== NPS CHASE ===== -->
+    <div class="template-card" data-cat="nps">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <span class="cat-badge" style="color:var(--accent);border-color:rgba(232,197,71,0.4)">NPS</span>
+          <div>
+            <div class="template-name">NPS Survey Chase - Relationship</div>
+            <div class="template-desc">Chasing existing tenants who haven't completed the survey</div>
+          </div>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="template-section">
+          <div class="section-label">Subject</div>
+          <div class="email-meta" id="sub-nps-1">A tiny favour from your Spaces team 🙏</div>
+          <div class="copy-row"><button class="copy-btn-secondary" onclick="copyEl('sub-nps-1', this)">Copy subject</button></div>
+        </div>
+        <div class="template-section">
+          <div class="section-label">Body</div>
+          <div class="email-body-wrap">
+            <div class="email-body" id="body-nps-1">Hi [NAME],
+
+Hope you're having a great day!
+
+[PERSONAL TOUCH - e.g. "Great to see you earlier!" or "Hope your new starter is settling in well!"]
+
+You should have recently received an email from a donotreply@ address with the subject line "Your Spaces Experience" - it contains a short survey about your time with us here at the hub, and we'd love it if you could take a couple of minutes to fill it out.
+
+Your feedback genuinely matters to us and goes directly toward shaping how we run the place - so top scores and honest comments are both very welcome! 🌟
+
+[IF THERE'S BEEN A RECENT ISSUE: We know it hasn't been plain sailing recently with [X] - we're on it, and the comments section is a great place to flag that so it's on record.]
+
+Thanks so much - we really appreciate it!
+
+Chris, Spaces Norwich Digital Hub</div>
+          </div>
+          <div class="placeholder-note">Placeholders: [NAME] [PERSONAL TOUCH] [ISSUE IF APPLICABLE]</div>
+          <div class="copy-row"><button class="copy-btn" onclick="copyEl('body-nps-1', this)">Copy email body</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== NPS POST TOUR ===== -->
+    <div class="template-card" data-cat="nps">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <span class="cat-badge" style="color:var(--accent);border-color:rgba(232,197,71,0.4)">NPS</span>
+          <div>
+            <div class="template-name">NPS Survey Chase - Post Tour</div>
+            <div class="template-desc">Chasing visitors after a tour who haven't responded</div>
+          </div>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="template-section">
+          <div class="section-label">Subject</div>
+          <div class="email-meta" id="sub-nps-2">Following up after your visit to [CENTRE NAME]</div>
+          <div class="copy-row"><button class="copy-btn-secondary" onclick="copyEl('sub-nps-2', this)">Copy subject</button></div>
+        </div>
+        <div class="template-section">
+          <div class="section-label">Body</div>
+          <div class="email-body-wrap">
+            <div class="email-body" id="body-nps-2">Hi [NAME],
+
+I hope this email finds you well!
+
+I wanted to reach out following your recent visit to [CENTRE NAME]. We'd love to hear your thoughts about the experience and whether we can help with your workspace needs.
+
+Your feedback is incredibly valuable to us and helps us ensure we're providing the best possible service to our community. If you have a few moments, I'd really appreciate it if you could share your impressions by completing our quick survey.
+
+[SURVEY LINK]
+
+If you have any questions about our space, membership options, or would like to arrange another visit, please don't hesitate to get in touch.
+
+Thanks so much for taking the time to visit us!
+
+Chris Michaels
+Community Manager
+[CENTRE NAME]
+01603 804 360</div>
+          </div>
+          <div class="placeholder-note">Placeholders: [NAME] [CENTRE NAME] [SURVEY LINK]</div>
+          <div class="copy-row"><button class="copy-btn" onclick="copyEl('body-nps-2', this)">Copy email body</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== WELCOME NEW TENANT ===== -->
+    <div class="template-card" data-cat="welcome">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <span class="cat-badge" style="color:var(--green);border-color:rgba(74,222,128,0.4)">Welcome</span>
+          <div>
+            <div class="template-name">Welcome to Townshend House</div>
+            <div class="template-desc">New tenant welcome email - full hub info</div>
+          </div>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="template-section">
+          <div class="section-label">Subject</div>
+          <div class="email-meta" id="sub-welcome-1">Welcome to Townshend House, [COMPANY NAME]! 🎉</div>
+          <div class="copy-row"><button class="copy-btn-secondary" onclick="copyEl('sub-welcome-1', this)">Copy subject</button></div>
+        </div>
+        <div class="template-section">
+          <div class="section-label">Body</div>
+          <div class="email-body-wrap">
+            <div class="email-body" id="body-welcome-1">Hi team,
+
+WELCOME TO TOWNSHEND HOUSE! We're absolutely buzzing to have you all officially settled in with us here at Norwich Digital Hub. It's been great seeing you get stuck in - the place already feels livelier with you here!
+
+A quick intro to your community team:
+
+I'm Chris, your Community Manager (you'll probably catch me doing a million things at once around reception). I'm here to make sure everything runs smoothly for you - whether that's sorting bookings, handling any queries, or just being a friendly face when you need one. If you need anything at all, I'm your go-to person.
+
+Gareth Williams is our City Manager and oversees all our Norwich locations. Between us, we've got you covered for absolutely anything you might need.
+
+A few handy things to know:
+
+📍 The building: Townshend House is a stunning Grade II listed building from 1899, right in the heart of Norwich at 30 Crown Road, NR1 3DT. You've got 24/7 access with your entry cards, and the whole place is covered by monitored CCTV for security.
+
+📞 Get in touch: Reception number is 01603 804 360 (also on WhatsApp if that's easier)
+
+💻 Printing: We've got Canon cloud printers throughout the building. Head to go.eu.uniflowonline.com to set up your account (you'll need your MyRegus login details). You can print directly from your device, upload files via browser or the mobile app, or even email documents to mobileprint@go.eu.uniflowonline.com. I've attached a full guide that walks you through everything!
+
+🔥 Fire assembly point: Crown Road Car Park (hopefully never needed, but worth knowing!)
+
+📦 Deliveries: All parcels must have your company name on them or they'll be refused at reception. Personal deliveries (Amazon etc.) are absolutely fine - just give us a heads up in advance along with any PIN codes and we'll make sure they're sorted for you.
+
+☕ Coffee & Tea: Unlimited self-service coffee and hot beverages are included in your package - help yourselves!
+
+🧹 Cleaning: You'll find a QR code by your office door - simply scan this whenever you'd like your office cleaned and the team will sort it for you. Your desks and storage areas are your responsibility to keep tidy.
+
+📧 Your online account: Everything lives at myspacesworks.com - documents, invoices, booking meeting rooms, managing your account details, opting in/out of services, the lot.
+
+We're a proper community here at the Hub, and you're joining a brilliant mix of businesses. If you ever fancy getting involved with events or just want to connect with other hubbers, let us know!
+
+Right, that's enough from me - if you need ANYTHING at all, don't hesitate to shout. Seriously. Even if it seems small. That's what we're here for.
+
+Looking forward to seeing you all thrive here!
+
+Chris 🚀
+Chris Michaels
+Community Manager
+Spaces Norwich Digital Hub
+Townshend House, 30 Crown Road, Norwich, NR1 3DT
+01603 804 360</div>
+          </div>
+          <div class="placeholder-note">Placeholders: [COMPANY NAME] - update personal touches per tenant</div>
+          <div class="copy-row"><button class="copy-btn" onclick="copyEl('body-welcome-1', this)">Copy email body</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ADMIN - UNSIGNED AGREEMENT ===== -->
+    <div class="template-card" data-cat="admin">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <span class="cat-badge" style="color:var(--blue);border-color:rgba(96,165,250,0.4)">Admin</span>
+          <div>
+            <div class="template-name">Unsigned Agreement Chase</div>
+            <div class="template-desc">Nudge to return a signed agreement before month end</div>
+          </div>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="template-section">
+          <div class="section-label">Subject</div>
+          <div class="email-meta" id="sub-admin-1">Co-working agreement - quick one from us!</div>
+          <div class="copy-row"><button class="copy-btn-secondary" onclick="copyEl('sub-admin-1', this)">Copy subject</button></div>
+        </div>
+        <div class="template-section">
+          <div class="section-label">Body</div>
+          <div class="email-body-wrap">
+            <div class="email-body" id="body-admin-1">Hi [NAME],
+
+Hope you're well! Just a quick one - [ACCOUNT MANAGER] sent over your [PRODUCT] agreement recently and we don't appear to have had a signed copy back yet.
+
+Would you be able to get that signed and returned to us as soon as possible? With the 1st of the month landing [soon/tomorrow] we can't guarantee the current pricing will still be available after that point, so the sooner the better to get you locked in!
+
+Any questions in the meantime, just shout.
+
+Chris
+Community Manager, Spaces Norwich Digital Hub
+01603 804360 (WhatsApp)</div>
+          </div>
+          <div class="placeholder-note">Placeholders: [NAME] [ACCOUNT MANAGER] [PRODUCT]</div>
+          <div class="copy-row"><button class="copy-btn" onclick="copyEl('body-admin-1', this)">Copy email body</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ADMIN - PRINTING SETUP ===== -->
+    <div class="template-card" data-cat="admin">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <span class="cat-badge" style="color:var(--blue);border-color:rgba(96,165,250,0.4)">Admin</span>
+          <div>
+            <div class="template-name">Canon Printing Setup</div>
+            <div class="template-desc">How to get set up on the cloud printers</div>
+          </div>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="template-section">
+          <div class="section-label">Subject</div>
+          <div class="email-meta" id="sub-print-1">Printing at Townshend House - Quick Setup Guide</div>
+          <div class="copy-row"><button class="copy-btn-secondary" onclick="copyEl('sub-print-1', this)">Copy subject</button></div>
+        </div>
+        <div class="template-section">
+          <div class="section-label">Body</div>
+          <div class="email-body-wrap">
+            <div class="email-body" id="body-print-1">Hi [NAME],
+
+Just a quick one to get you set up with printing here at Townshend House!
+
+We use Canon cloud printers throughout the building. Here's how to get going:
+
+1. Head to go.eu.uniflowonline.com and create your account using your MyRegus/MySpacesworks login details.
+
+2. Once set up, you can print in three ways:
+   - Directly from your device via the Uniflow app
+   - Upload files through the browser at go.eu.uniflowonline.com
+   - Email documents to mobileprint@go.eu.uniflowonline.com
+
+3. To release your print job, just tap your access card on the printer.
+
+I've attached the full setup guide which walks through everything step by step - it's very straightforward once you're in!
+
+Any issues, just give us a shout at reception or call 01603 804 360.
+
+Chris
+Community Manager, Spaces Norwich Digital Hub</div>
+          </div>
+          <div class="placeholder-note">Placeholders: [NAME] - attach printing guide PDF</div>
+          <div class="copy-row"><button class="copy-btn" onclick="copyEl('body-print-1', this)">Copy email body</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== FASTOLF RE-ENGAGEMENT ===== -->
+    <div class="template-card" data-cat="fastolf">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-left">
+          <span class="cat-badge" style="color:var(--blue);border-color:rgba(96,165,250,0.4)">Fastolf</span>
+          <div>
+            <div class="template-name">Fastolf House - Customer Re-engagement</div>
+            <div class="template-desc">Professional re-engagement for previous GY customers</div>
+          </div>
+        </div>
+        <div class="chevron">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="template-section">
+          <div class="section-label">Subject options</div>
+          <div class="email-meta">We'd love to welcome you back to Fastolf House
+Your workspace solution in Great Yarmouth
+Come back and work with us at Fastolf House</div>
+        </div>
+        <div class="template-section">
+          <div class="section-label">Body</div>
+          <div class="email-body-wrap">
+            <div class="email-body" id="body-fastolf-1">Dear [NAME],
+
+We hope this message finds you well.
+
+It's been some time since you last visited Fastolf House in Great Yarmouth, and we wanted to reach out to see if we could support your workspace needs once again.
+
+Whether you're looking for a professional meeting room, a productive day office, or a flexible workspace solution, we're here to help. Our centre offers:
+
+- Professional office and meeting room facilities
+- High-speed WiFi and modern amenities
+- Flexible booking options to suit your schedule
+- Complimentary refreshments
+- A professional environment in a convenient Great Yarmouth location
+
+[OFFER: e.g. "10% discount on your next booking" / "Complimentary room upgrade subject to availability"]
+
+If you'd like to discuss your requirements or arrange a booking, please don't hesitate to get in touch. You can reply to this email or call us on [PHONE NUMBER].
+
+We look forward to welcoming you back.
+
+Kind regards,
+[YOUR NAME]
+Community Associate
+Fastolf House, Great Yarmouth</div>
+          </div>
+          <div class="placeholder-note">Placeholders: [NAME] [OFFER] [PHONE NUMBER] [YOUR NAME]</div>
+          <div class="copy-row"><button class="copy-btn" onclick="copyEl('body-fastolf-1', this)">Copy email body</button></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+
+  function toggleCard(header) {
+    header.parentElement.classList.toggle('open');
+  }
+
+  function filterCards(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.template-card').forEach(card => {
+      if (cat === 'all' || card.dataset.cat === cat) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+        card.classList.remove('open');
+      }
+    });
+  }
+
+  function copyEl(id, btn) {
+    const el = document.getElementById(id);
+    const text = el.textContent.trim();
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
+</body>
+</html>

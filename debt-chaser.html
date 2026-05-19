@@ -464,7 +464,10 @@
 
 <header>
   <div class="logo">Norwich Digital Hub — Debt Chaser</div>
-  <div class="header-date" id="todayDate"></div>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <span id="storageBadge" style="display:none;font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);background:rgba(232,197,71,0.08);border:1px solid rgba(232,197,71,0.25);padding:5px 12px;border-radius:6px;align-items:center;gap:4px;"></span>
+    <div class="header-date" id="todayDate"></div>
+  </div>
 </header>
 
 <div class="main">
@@ -505,6 +508,50 @@
   // Set today's date
   const today = new Date();
   document.getElementById('todayDate').textContent = today.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+
+  const STORAGE_KEY = 'debtchaser_data';
+  const STORAGE_DATE_KEY = 'debtchaser_saved_date';
+
+  function saveToStorage(clients) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+    localStorage.setItem(STORAGE_DATE_KEY, new Date().toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'}));
+    updateStorageBadge();
+  }
+
+  function loadFromStorage() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const savedDate = localStorage.getItem(STORAGE_DATE_KEY);
+    if (raw) {
+      try {
+        const clients = JSON.parse(raw);
+        if (clients && clients.length > 0) {
+          updateStorageBadge();
+          return { clients, savedDate };
+        }
+      } catch(e) {}
+    }
+    return null;
+  }
+
+  function clearStorage() {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_DATE_KEY);
+    updateStorageBadge();
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('summaryBar').innerHTML = '';
+    document.getElementById('clientsGrid').innerHTML = '';
+  }
+
+  function updateStorageBadge() {
+    const savedDate = localStorage.getItem(STORAGE_DATE_KEY);
+    const badge = document.getElementById('storageBadge');
+    if (savedDate) {
+      badge.style.display = 'inline-flex';
+      badge.innerHTML = `💾 Data saved from ${savedDate} &nbsp;<span onclick="clearStorage()" style="cursor:pointer;opacity:0.6;margin-left:4px;" title="Clear saved data">✕</span>`;
+    } else {
+      badge.style.display = 'none';
+    }
+  }
 
   // Tier logic
   function getTier(daysOverdue) {
@@ -713,6 +760,7 @@
 
     document.getElementById('results').style.display = 'block';
     document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    saveToStorage(clients);
   }
 
   function copyEmail(btn, idx) {
@@ -740,6 +788,12 @@
     const file = e.dataTransfer.files[0];
     if (file) parseFile(file);
   });
+
+  // Auto-load saved data on startup
+  const saved = loadFromStorage();
+  if (saved) {
+    renderResults(saved.clients);
+  }
 </script>
 </body>
 </html>

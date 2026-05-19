@@ -485,7 +485,10 @@ select.filter-select:focus {
 <body>
 <header>
   <div class="logo">Norwich Centres</div>
-  <div class="header-date" id="headerDate"></div>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <span id="storageBadge" style="display:none;font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);background:rgba(232,197,71,0.08);border:1px solid rgba(232,197,71,0.25);padding:5px 12px;border-radius:6px;align-items:center;gap:4px;"></span>
+    <div class="header-date" id="headerDate"></div>
+  </div>
 </header>
 
 <div class="main">
@@ -628,6 +631,53 @@ const CENTRES = {
 let allNpsData = [];
 let npsData = [];
 let filteredData = [];
+let contactedIds = [];
+
+const STORAGE_KEY = 'nps_data';
+const STORAGE_DATE_KEY = 'nps_saved_date';
+
+function saveToStorage() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ allNpsData, contactedIds }));
+  localStorage.setItem(STORAGE_DATE_KEY, new Date().toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'}));
+  updateStorageBadge();
+}
+
+function loadFromStorage() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  const savedDate = localStorage.getItem(STORAGE_DATE_KEY);
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.allNpsData && parsed.allNpsData.length > 0) {
+        return { ...parsed, savedDate };
+      }
+    } catch(e) {}
+  }
+  return null;
+}
+
+function clearStorage() {
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(STORAGE_DATE_KEY);
+  contactedIds = [];
+  allNpsData = [];
+  npsData = [];
+  filteredData = [];
+  updateStorageBadge();
+  document.getElementById('uploadSection').style.display = 'block';
+  document.getElementById('dashboard').style.display = 'none';
+}
+
+function updateStorageBadge() {
+  const savedDate = localStorage.getItem(STORAGE_DATE_KEY);
+  const badge = document.getElementById('storageBadge');
+  if (savedDate && badge) {
+    badge.style.display = 'inline-flex';
+    badge.innerHTML = `💾 Data saved from ${savedDate} &nbsp;<span onclick="clearStorage()" style="cursor:pointer;opacity:0.6;margin-left:4px;" title="Clear saved data">✕</span>`;
+  } else if (badge) {
+    badge.style.display = 'none';
+  }
+}
 
 // Upload area drag and drop
 const dropZone = document.getElementById('dropZone');
@@ -709,6 +759,7 @@ function readExcelFile(file) {
     const availableCentres = [...new Set(allNpsData.map(row => row['Centre Number']))].sort();
     console.log('Available centres:', availableCentres.map(num => `${CENTRES[num]?.name} (${num})`));
     
+    saveToStorage();
     displayDashboard();
   };
   reader.readAsArrayBuffer(file);
@@ -717,7 +768,7 @@ function readExcelFile(file) {
 function displayDashboard() {
   document.getElementById('uploadSection').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';
-
+  updateStorageBadge();
   updateStats();
   displayClients();
 }
@@ -898,12 +949,14 @@ function copyEmail() {
 function markAsContacted(index) {
   if (confirm('Mark this client as contacted?')) {
     const removedClient = filteredData[index];
+    if (removedClient['Request ID']) contactedIds.push(removedClient['Request ID']);
     filteredData.splice(index, 1);
     
     // Remove from both npsData and allNpsData
     npsData = npsData.filter(c => c['Request ID'] !== removedClient['Request ID']);
     allNpsData = allNpsData.filter(c => c['Request ID'] !== removedClient['Request ID']);
     
+    saveToStorage();
     updateStats();
     displayClients();
   }
@@ -991,6 +1044,18 @@ function exportFilteredData() {
   XLSX.utils.book_append_sheet(wb, ws, "Non-Responders");
   XLSX.writeFile(wb, `${centreName}_NPS_Filtered_${new Date().toISOString().split('T')[0]}.xlsx`);
 }
+
+// Auto-load saved data on startup
+(function() {
+  const saved = loadFromStorage();
+  if (saved) {
+    allNpsData = saved.allNpsData;
+    contactedIds = saved.contactedIds || [];
+    npsData = allNpsData.filter(row => row['Centre Number'] === 8536);
+    filteredData = [...npsData];
+    displayDashboard();
+  }
+})();
 </script>
 </body>
 </html>
