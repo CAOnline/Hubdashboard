@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NPS Follow-Up — Norwich Centres</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0f0f0f;
+  --surface: #1a1a1a;
+  --surface2: #222222;
+  --border: #2e2e2e;
+  --text: #f0ede8;
+  --muted: #888;
+  --accent: #e8c547;
+  --accent2: #e8874d;
+  --green: #4ade80;
+  --red: #f87171;
+  --orange: #fb923c;
+  --purple: #e879f9;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  min-height: 100vh;
+}
+
+header {
+  border-bottom: 1px solid var(--border);
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 100;
+}
+
+.logo {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.header-date {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 32px 80px;
+}
+
+.hero {
+  margin-bottom: 48px;
+}
+
+h1 {
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+h1 span {
+  color: var(--accent);
+}
+
+.subtitle {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 400;
+}
+
+/* Drop zone */
+.drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 56px 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--surface);
+  position: relative;
+  margin-bottom: 32px;
+}
+
+.drop-zone:hover {
+  border-color: var(--accent);
+  background: var(--surface2);
+}
+
+.drop-zone.dragging {
+  border-color: var(--accent);
+  background: var(--surface2);
+  transform: scale(1.01);
+}
+
+.drop-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.7;
+}
+
+.drop-zone h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.drop-zone p {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 8px;
+  font-family: 'DM Mono', monospace;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.btn:hover {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #000;
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #000;
+  font-weight: 700;
+}
+
+.btn-primary:hover {
+  background: var(--accent2);
+  border-color: var(--accent2);
+}
+
+.dashboard {
+  display: none;
+}
+
+/* Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+}
+
+.stat-num {
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--accent);
+}
+
+.stat-num.green { color: var(--green); }
+.stat-num.red { color: var(--red); }
+.stat-num.orange { color: var(--orange); }
+
+.stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  margin-right: 4px;
+}
+
+.filter-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 6px 14px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.04em;
+}
+
+.filter-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.filter-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #000;
+  font-weight: 700;
+}
+
+select.filter-select {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 6px 14px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--text);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+}
+
+select.filter-select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Client cards */
+.client-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  transition: all 0.2s;
+}
+
+.client-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.client-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 16px;
+  gap: 16px;
+}
+
+.client-name {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.badge.post-tour {
+  background: rgba(251, 146, 60, 0.15);
+  color: var(--orange);
+}
+
+.badge.relationship {
+  background: rgba(74, 222, 128, 0.15);
+  color: var(--green);
+}
+
+.client-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.meta-item {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.meta-item strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.client-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-small {
+  font-size: 11px;
+  padding: 7px 14px;
+}
+
+/* Email Modal */
+.email-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.email-modal.active {
+  display: flex;
+}
+
+.email-content {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.email-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.email-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 32px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.15s;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+.email-field {
+  margin-bottom: 20px;
+}
+
+.email-field label {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.email-field input,
+.email-field textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'Syne', sans-serif;
+  background: var(--surface2);
+  color: var(--text);
+  transition: border-color 0.15s;
+}
+
+.email-field input:focus,
+.email-field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.email-field textarea {
+  min-height: 320px;
+  resize: vertical;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.email-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .client-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .client-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .client-actions {
+    flex-direction: column;
+  }
+
+  .btn-small {
+    width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Norwich Centres</div>
+  <div class="header-date" id="headerDate"></div>
+</header>
+
+<div class="main">
+  <div id="uploadSection">
+    <div class="hero">
+      <h1>NPS <span>Follow-Up</span></h1>
+      <p class="subtitle">Track and manage non-responders across Norwich centres</p>
+    </div>
+
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+      <label style="font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 700; color: var(--muted); margin-bottom: 12px; display: block; text-transform: uppercase; letter-spacing: 0.08em;">Select Centre</label>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+        <button class="filter-btn active" id="centreBtn8536" onclick="selectCentre(8536, 'Norwich Digital Hub')">
+          Digital Hub (8536)
+        </button>
+        <button class="filter-btn" id="centreBtn71" onclick="selectCentre(71, 'Stannard Place')">
+          Stannard Place (71)
+        </button>
+        <button class="filter-btn" id="centreBtn7553" onclick="selectCentre(7553, '18 Colegate')">
+          18 Colegate (7553)
+        </button>
+        <button class="filter-btn" id="centreBtn8959" onclick="selectCentre(8959, 'Independent House')">
+          Independent House (8959)
+        </button>
+      </div>
+    </div>
+
+    <div class="drop-zone" id="dropZone">
+      <div class="drop-icon">📊</div>
+      <h2>Drop Excel file here</h2>
+      <p>or click to browse</p>
+      <input type="file" id="fileInput" accept=".xlsx,.xls" />
+      <p style="margin-top: 16px; font-size: 11px;">Accepts: NPS_*_Non-responders_*.xlsx</p>
+    </div>
+  </div>
+
+  <div class="dashboard" id="dashboard">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num" id="totalNonResponders">0</div>
+        <div class="stat-label">Total Non-Responders</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num orange" id="postTourCount">0</div>
+        <div class="stat-label">Post Tour</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num green" id="relationshipCount">0</div>
+        <div class="stat-label">Relationship</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num red" id="officeCount">0</div>
+        <div class="stat-label">Office Product</div>
+      </div>
+    </div>
+
+    <div class="filters">
+      <span class="filter-label">Centre:</span>
+      <select class="filter-select" id="centreFilter" onchange="applyFilters()">
+        <option value="8536">Digital Hub (8536)</option>
+        <option value="71">Stannard Place (71)</option>
+        <option value="7553">18 Colegate (7553)</option>
+        <option value="8959">Independent House (8959)</option>
+        <option value="all">All Centres</option>
+      </select>
+      <span class="filter-label" style="margin-left: 16px;">Touchpoint:</span>
+      <select class="filter-select" id="touchpointFilter" onchange="applyFilters()">
+        <option value="all">All Touchpoints</option>
+        <option value="Post Tour">Post Tour</option>
+        <option value="Relationship">Relationship</option>
+      </select>
+      <span class="filter-label" style="margin-left: 16px;">Product:</span>
+      <select class="filter-select" id="productFilter" onchange="applyFilters()">
+        <option value="all">All Products</option>
+        <option value="Office">Office</option>
+        <option value="Not Found">Not Found</option>
+      </select>
+      <button class="btn" onclick="exportFilteredData()">↓ Export</button>
+      <button class="btn btn-primary" onclick="generateBulkEmails()">✉ Bulk Emails</button>
+    </div>
+
+    <div id="clientsList"></div>
+  </div>
+</div>
+
+<div class="email-modal" id="emailModal">
+  <div class="email-content">
+    <div class="email-header">
+      <h2 class="email-title">Follow-Up Email</h2>
+      <button class="close-btn" onclick="closeEmailModal()">&times;</button>
+    </div>
+    <div class="email-field">
+      <label>To</label>
+      <input type="text" id="emailTo" readonly />
+    </div>
+    <div class="email-field">
+      <label>Subject</label>
+      <input type="text" id="emailSubject" />
+    </div>
+    <div class="email-field">
+      <label>Message</label>
+      <textarea id="emailBody"></textarea>
+    </div>
+    <div class="email-actions">
+      <button class="btn" onclick="closeEmailModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="copyEmail()">📋 Copy</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Update header date
+document.getElementById('headerDate').textContent = new Date().toLocaleDateString('en-GB', {
+  weekday: 'short',
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric'
+});
+
+// Centre mappings
+const CENTRES = {
+  8536: {
+    name: 'Spaces Norwich Digital Hub',
+    address: 'Townshend House, 30 Crown Road, Norwich, NR1 3DT'
+  },
+  71: {
+    name: 'Stannard Place',
+    address: 'Cavell House, St Crispins Road, Norwich, NR3 1YE'
+  },
+  7553: {
+    name: '18 Colegate',
+    address: '18 Colegate, Norwich, NR3 1BN'
+  },
+  8959: {
+    name: 'Independent House',
+    address: 'Independent House, Norwich, NR1 3DP'
+  }
+};
+
+let allNpsData = [];
+let npsData = [];
+let filteredData = [];
+
+// Upload area drag and drop
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+
+// Make drop zone clickable
+dropZone.addEventListener('click', () => {
+  fileInput.click();
+});
+
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+  dropZone.addEventListener(eventName, preventDefaults, false);
+});
+
+function preventDefaults(e) {
+  e.preventDefault();
+  e.stopPropagation();
+}
+
+['dragenter', 'dragover'].forEach(eventName => {
+  dropZone.addEventListener(eventName, () => {
+    dropZone.classList.add('dragging');
+  }, false);
+});
+
+['dragleave', 'drop'].forEach(eventName => {
+  dropZone.addEventListener(eventName, () => {
+    dropZone.classList.remove('dragging');
+  }, false);
+});
+
+dropZone.addEventListener('drop', handleDrop, false);
+fileInput.addEventListener('change', handleFileSelect, false);
+
+function handleDrop(e) {
+  const dt = e.dataTransfer;
+  const files = dt.files;
+  handleFiles(files);
+}
+
+function handleFileSelect(e) {
+  const files = e.target.files;
+  handleFiles(files);
+}
+
+function handleFiles(files) {
+  if (files.length > 0) {
+    const file = files[0];
+    if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+      readExcelFile(file);
+    } else {
+      alert('Please upload an Excel file (.xlsx or .xls)');
+    }
+  }
+}
+
+function readExcelFile(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, {type: 'array'});
+    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+    // Filter for Norwich centres only
+    const norwichCentres = [8536, 71, 7553, 8959];
+    allNpsData = jsonData.filter(row => norwichCentres.includes(row['Centre Number']));
+    
+    if (allNpsData.length === 0) {
+      alert('No Norwich centre entries found in this file.');
+      return;
+    }
+
+    // Start with Digital Hub as default
+    npsData = allNpsData.filter(row => row['Centre Number'] === 8536);
+    filteredData = [...npsData];
+    
+    // Show available centres
+    const availableCentres = [...new Set(allNpsData.map(row => row['Centre Number']))].sort();
+    console.log('Available centres:', availableCentres.map(num => `${CENTRES[num]?.name} (${num})`));
+    
+    displayDashboard();
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function displayDashboard() {
+  document.getElementById('uploadSection').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+
+  updateStats();
+  displayClients();
+}
+
+function updateStats() {
+  document.getElementById('totalNonResponders').textContent = filteredData.length;
+  
+  const postTour = filteredData.filter(c => c['Survey Touchpoint'] === 'Post Tour').length;
+  const relationship = filteredData.filter(c => c['Survey Touchpoint'] === 'Relationship').length;
+  const office = filteredData.filter(c => c['Survey Product'] === 'Office').length;
+
+  document.getElementById('postTourCount').textContent = postTour;
+  document.getElementById('relationshipCount').textContent = relationship;
+  document.getElementById('officeCount').textContent = office;
+}
+
+function displayClients() {
+  const clientsList = document.getElementById('clientsList');
+  clientsList.innerHTML = '';
+
+  if (filteredData.length === 0) {
+    clientsList.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--muted);">No non-responders found for the selected filters.</div>';
+    return;
+  }
+
+  filteredData.forEach((client, index) => {
+    const card = document.createElement('div');
+    card.className = 'client-card';
+    
+    const requestDate = new Date(client['Survey Request Date']).toLocaleDateString('en-GB');
+    const daysSince = Math.floor((new Date() - new Date(client['Survey Request Date'])) / (1000 * 60 * 60 * 24));
+    
+    const touchpoint = client['Survey Touchpoint'] || 'Unknown';
+    const badgeClass = touchpoint === 'Post Tour' ? 'post-tour' : 'relationship';
+    
+    const centreName = CENTRES[client['Centre Number']]?.name || `Centre ${client['Centre Number']}`;
+
+    card.innerHTML = `
+      <div class="client-header">
+        <div class="client-name">${client['Account Name']}</div>
+        <div class="badge ${badgeClass}">${touchpoint}</div>
+      </div>
+      <div class="client-meta">
+        <div class="meta-item">
+          <strong>Centre:</strong> ${centreName}
+        </div>
+        <div class="meta-item">
+          <strong>Product:</strong> ${client['Survey Product'] || 'Not specified'}
+        </div>
+        <div class="meta-item">
+          <strong>Request:</strong> ${requestDate}
+        </div>
+        <div class="meta-item">
+          <strong>Days since:</strong> ${daysSince} days
+        </div>
+        <div class="meta-item">
+          <strong>Titan ID:</strong> ${client['Titan Account ID'] !== -1 ? client['Titan Account ID'] : 'Not found'}
+        </div>
+      </div>
+      <div class="client-actions">
+        <button class="btn btn-small btn-primary" onclick="generateEmail(${index})">
+          ✉ Email
+        </button>
+        <button class="btn btn-small" onclick="markAsContacted(${index})">
+          ✓ Mark Contacted
+        </button>
+      </div>
+    `;
+    
+    clientsList.appendChild(card);
+  });
+}
+
+function applyFilters() {
+  const centreFilter = document.getElementById('centreFilter').value;
+  const touchpointFilter = document.getElementById('touchpointFilter').value;
+  const productFilter = document.getElementById('productFilter').value;
+
+  // First filter by centre
+  if (centreFilter === 'all') {
+    npsData = [...allNpsData];
+  } else {
+    npsData = allNpsData.filter(client => client['Centre Number'] === parseInt(centreFilter));
+  }
+
+  // Then apply other filters
+  filteredData = npsData.filter(client => {
+    const touchpointMatch = touchpointFilter === 'all' || client['Survey Touchpoint'] === touchpointFilter;
+    const productMatch = productFilter === 'all' || client['Survey Product'] === productFilter;
+    return touchpointMatch && productMatch;
+  });
+
+  updateStats();
+  displayClients();
+}
+
+function generateEmail(index) {
+  const client = filteredData[index];
+  const touchpoint = client['Survey Touchpoint'];
+  const accountName = client['Account Name'];
+  const centreNumber = client['Centre Number'];
+  const centreInfo = CENTRES[centreNumber];
+  const centreName = centreInfo?.name || `Centre ${centreNumber}`;
+  
+  let subject, body;
+
+  if (touchpoint === 'Post Tour') {
+    subject = `Following up after your visit to ${centreName}`;
+    body = `Hi there,
+
+I hope this email finds you well!
+
+I wanted to reach out following your recent visit to ${centreName}. We'd love to hear your thoughts about the experience and whether we can help with your workspace needs.
+
+Your feedback is incredibly valuable to us and helps us ensure we're providing the best possible service to our community. If you have a few moments, I'd really appreciate it if you could share your impressions by completing our quick survey.
+
+[Survey link would be here]
+
+If you have any questions about our space, membership options, or would like to arrange another visit, please don't hesitate to get in touch.
+
+Thanks so much for taking the time to visit us!
+
+Best regards,
+Chris Michaels
+Community Manager
+${centreName}
+01603 804 360`;
+  } else {
+    // Relationship touchpoint
+    subject = `How are things going at ${centreName}?`;
+    body = `Hi there,
+
+I hope you're having a brilliant week!
+
+I wanted to check in and see how everything's going with your space at ${centreName}. Your feedback really matters to us, and I'd love to hear your thoughts on your experience so far.
+
+We recently sent out a quick survey, and I noticed we haven't heard back from you yet. If you have a spare moment, I'd be really grateful if you could share your feedback - it genuinely helps us make sure we're getting things right for you and the rest of our community.
+
+[Survey link would be here]
+
+If there's anything at all I can help with, or if you'd like to chat about your space or any of our services, just give me a shout.
+
+Thanks so much!
+
+Best regards,
+Chris Michaels
+Community Manager
+${centreName}
+01603 804 360`;
+  }
+
+  document.getElementById('emailTo').value = accountName;
+  document.getElementById('emailSubject').value = subject;
+  document.getElementById('emailBody').value = body;
+  document.getElementById('emailModal').classList.add('active');
+}
+
+function closeEmailModal() {
+  document.getElementById('emailModal').classList.remove('active');
+}
+
+function copyEmail() {
+  const to = document.getElementById('emailTo').value;
+  const subject = document.getElementById('emailSubject').value;
+  const body = document.getElementById('emailBody').value;
+
+  const fullEmail = `To: ${to}\nSubject: ${subject}\n\n${body}`;
+
+  navigator.clipboard.writeText(fullEmail).then(() => {
+    alert('Email copied to clipboard!');
+    closeEmailModal();
+  }).catch(err => {
+    console.error('Failed to copy: ', err);
+    alert('Failed to copy to clipboard. Please copy manually.');
+  });
+}
+
+function markAsContacted(index) {
+  if (confirm('Mark this client as contacted?')) {
+    const removedClient = filteredData[index];
+    filteredData.splice(index, 1);
+    
+    // Remove from both npsData and allNpsData
+    npsData = npsData.filter(c => c['Request ID'] !== removedClient['Request ID']);
+    allNpsData = allNpsData.filter(c => c['Request ID'] !== removedClient['Request ID']);
+    
+    updateStats();
+    displayClients();
+  }
+}
+
+function generateBulkEmails() {
+  let bulkEmails = '';
+  
+  filteredData.forEach(client => {
+    const touchpoint = client['Survey Touchpoint'];
+    const accountName = client['Account Name'];
+    const centreNumber = client['Centre Number'];
+    const centreInfo = CENTRES[centreNumber];
+    const centreName = centreInfo?.name || `Centre ${centreNumber}`;
+    
+    let subject, body;
+
+    if (touchpoint === 'Post Tour') {
+      subject = `Following up after your visit to ${centreName}`;
+      body = `Hi there,
+
+I hope this email finds you well!
+
+I wanted to reach out following your recent visit to ${centreName}. We'd love to hear your thoughts about the experience and whether we can help with your workspace needs.
+
+Your feedback is incredibly valuable to us and helps us ensure we're providing the best possible service to our community. If you have a few moments, I'd really appreciate it if you could share your impressions by completing our quick survey.
+
+[Survey link would be here]
+
+If you have any questions about our space, membership options, or would like to arrange another visit, please don't hesitate to get in touch.
+
+Thanks so much for taking the time to visit us!
+
+Best regards,
+Chris Michaels
+Community Manager
+${centreName}
+01603 804 360`;
+    } else {
+      subject = `How are things going at ${centreName}?`;
+      body = `Hi there,
+
+I hope you're having a brilliant week!
+
+I wanted to check in and see how everything's going with your space at ${centreName}. Your feedback really matters to us, and I'd love to hear your thoughts on your experience so far.
+
+We recently sent out a quick survey, and I noticed we haven't heard back from you yet. If you have a spare moment, I'd be really grateful if you could share your feedback - it genuinely helps us make sure we're getting things right for you and the rest of our community.
+
+[Survey link would be here]
+
+If there's anything at all I can help with, or if you'd like to chat about your space or any of our services, just give me a shout.
+
+Thanks so much!
+
+Best regards,
+Chris Michaels
+Community Manager
+${centreName}
+01603 804 360`;
+    }
+
+    bulkEmails += `\n${'='.repeat(80)}\n`;
+    bulkEmails += `TO: ${accountName}\n`;
+    bulkEmails += `CENTRE: ${centreName}\n`;
+    bulkEmails += `SUBJECT: ${subject}\n`;
+    bulkEmails += `${'='.repeat(80)}\n\n`;
+    bulkEmails += body + '\n';
+  });
+
+  navigator.clipboard.writeText(bulkEmails).then(() => {
+    alert(`${filteredData.length} emails copied to clipboard!`);
+  }).catch(err => {
+    console.error('Failed to copy: ', err);
+    alert('Failed to copy to clipboard.');
+  });
+}
+
+function exportFilteredData() {
+  const ws = XLSX.utils.json_to_sheet(filteredData);
+  const wb = XLSX.utils.book_new();
+  
+  const centreFilter = document.getElementById('centreFilter').value;
+  const centreName = centreFilter === 'all' ? 'All_Centres' : CENTRES[parseInt(centreFilter)]?.name.replace(/\s+/g, '_') || `Centre_${centreFilter}`;
+  
+  XLSX.utils.book_append_sheet(wb, ws, "Non-Responders");
+  XLSX.writeFile(wb, `${centreName}_NPS_Filtered_${new Date().toISOString().split('T')[0]}.xlsx`);
+}
+</script>
+</body>
+</html>

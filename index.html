@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spaces Norwich — Ops Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --bg2: #161616;
+      --bg3: #1e1e1e;
+      --accent: #e8c547;
+      --accent-dim: #b89a2e;
+      --text: #f0ede6;
+      --muted: #888;
+      --border: #2a2a2a;
+      --red: #e05c5c;
+      --green: #5ce08a;
+      --blue: #5cb4e0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* === GRID BACKGROUND === */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(232,197,71,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,197,71,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* === HEADER === */
+    header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 36px 48px 0;
+      gap: 24px;
+    }
+
+    .logo-block {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-mark {
+      width: 48px;
+      height: 48px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo-mark svg {
+      width: 26px;
+      height: 26px;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .logo-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    .logo-sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .header-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    #live-time {
+      font-family: 'DM Mono', monospace;
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    #live-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* === DIVIDER === */
+    .divider {
+      position: relative;
+      z-index: 10;
+      height: 1px;
+      background: var(--border);
+      margin: 28px 48px;
+    }
+
+    .divider::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 0;
+      width: 80px; height: 1px;
+      background: var(--accent);
+    }
+
+    /* === SECTION LABEL === */
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin: 0 48px 20px;
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* === CENTRES STATUS === */
+    .centres-strip {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      gap: 12px;
+      margin: 0 48px 36px;
+      flex-wrap: wrap;
+    }
+
+    .centre-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 10px 16px;
+      cursor: default;
+      transition: border-color 0.2s;
+    }
+
+    .centre-pill:hover { border-color: var(--accent); }
+
+    .centre-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .centre-dot.unmanned { background: var(--blue); box-shadow: 0 0 6px var(--blue); }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .centre-name {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .centre-ref {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* === MAIN TOOLS GRID === */
+    .tools-grid {
+      position: relative;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 0 48px 36px;
+    }
+
+    .tool-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 28px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      display: block;
+    }
+
+    .tool-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 0;
+      background: var(--accent);
+      transition: height 0.25s ease;
+    }
+
+    .tool-card:hover {
+      border-color: var(--accent);
+      background: var(--bg3);
+      transform: translateY(-2px);
+    }
+
+    .tool-card:hover::before { height: 100%; }
+
+    .tool-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .tool-icon {
+      width: 42px;
+      height: 42px;
+      background: rgba(232,197,71,0.08);
+      border: 1px solid rgba(232,197,71,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .tool-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border: 1px solid;
+    }
+
+    .badge-html { color: var(--accent); border-color: rgba(232,197,71,0.3); }
+    .badge-xlsx { color: var(--green); border-color: rgba(92,224,138,0.3); }
+    .badge-ext { color: var(--blue); border-color: rgba(92,180,224,0.3); }
+
+    .tool-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+    }
+
+    .tool-desc {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .tool-arrow {
+      position: absolute;
+      bottom: 20px;
+      right: 24px;
+      font-size: 18px;
+      color: var(--border);
+      transition: all 0.2s;
+    }
+
+    .tool-card:hover .tool-arrow {
+      color: var(--accent);
+      transform: translate(3px, -3px);
+    }
+
+    /* === QUICK LINKS === */
+    .links-grid {
+      position: relative;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 0 48px 36px;
+    }
+
+    .link-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 16px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .link-card:hover {
+      border-color: var(--accent);
+      background: var(--bg3);
+    }
+
+    .link-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .link-info { flex: 1; min-width: 0; }
+
+    .link-name {
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .link-url {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* === INFO ROW === */
+    .info-row {
+      position: relative;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 0 48px 48px;
+    }
+
+    .info-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 24px;
+    }
+
+    .info-card-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .info-row-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+
+    .info-row-item:last-child { border-bottom: none; }
+
+    .info-key {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+    }
+
+    .info-val {
+      font-size: 13px;
+      font-weight: 600;
+      text-align: right;
+    }
+
+    /* === FOOTER === */
+    footer {
+      position: relative;
+      z-index: 10;
+      padding: 20px 48px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .footer-accent {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* === MODAL === */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--accent);
+      width: 90vw;
+      max-width: 960px;
+      height: 80vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .modal-close {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 18px;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      font-family: 'Syne', sans-serif;
+    }
+
+    .modal-close:hover { border-color: var(--accent); color: var(--accent); }
+
+    .modal-frame {
+      flex: 1;
+      width: 100%;
+      border: none;
+      background: var(--bg);
+    }
+
+    /* === ANIMATIONS === */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tool-card, .link-card, .centre-pill, .info-card {
+      animation: fadeInUp 0.4s ease backwards;
+    }
+
+    .tool-card:nth-child(1) { animation-delay: 0.05s; }
+    .tool-card:nth-child(2) { animation-delay: 0.1s; }
+    .tool-card:nth-child(3) { animation-delay: 0.15s; }
+    .link-card:nth-child(1) { animation-delay: 0.2s; }
+    .link-card:nth-child(2) { animation-delay: 0.24s; }
+    .link-card:nth-child(3) { animation-delay: 0.28s; }
+    .link-card:nth-child(4) { animation-delay: 0.32s; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo-block">
+      <div class="logo-mark">
+        <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="10" height="10" fill="#0f0f0f"/>
+          <rect x="14" y="2" width="10" height="10" fill="#0f0f0f"/>
+          <rect x="2" y="14" width="10" height="10" fill="#0f0f0f"/>
+          <rect x="14" y="14" width="10" height="10" fill="#0f0f0f"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <div class="logo-title">Spaces Norwich</div>
+        <div class="logo-sub">Ops Hub — Chris Michaels</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div id="live-time">--:--</div>
+      <div id="live-date">Loading...</div>
+    </div>
+  </header>
+
+  <div class="divider"></div>
+
+  <div class="section-label">Cluster Centres</div>
+
+  <div class="centres-strip">
+    <div class="centre-pill">
+      <div class="centre-dot"></div>
+      <div>
+        <div class="centre-name">Townshend House</div>
+        <div class="centre-ref">Norwich Digital Hub · 8536</div>
+      </div>
+    </div>
+    <div class="centre-pill">
+      <div class="centre-dot"></div>
+      <div>
+        <div class="centre-name">Stannard Place</div>
+        <div class="centre-ref">18 Colegate · 71 / 7553</div>
+      </div>
+    </div>
+    <div class="centre-pill">
+      <div class="centre-dot"></div>
+      <div>
+        <div class="centre-name">Independent House</div>
+        <div class="centre-ref">Norwich · 8959</div>
+      </div>
+    </div>
+    <div class="centre-pill">
+      <div class="centre-dot unmanned"></div>
+      <div>
+        <div class="centre-name">Fastolf House</div>
+        <div class="centre-ref">Great Yarmouth · 10175 · Unmanned</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Tools</div>
+
+  <div class="tools-grid">
+    <div class="tool-card" onclick="openTool('debt-chaser.html', 'Debt Chaser')">
+      <div class="tool-card-header">
+        <div class="tool-icon">💸</div>
+        <span class="tool-badge badge-html">HTML</span>
+      </div>
+      <div class="tool-title">Debt Chaser</div>
+      <div class="tool-desc">Drag-drop CSV/Excel input. Escalation tiers by days overdue. Daily accounts chasing for Norwich cluster.</div>
+      <div class="tool-arrow">↗</div>
+    </div>
+
+    <div class="tool-card" onclick="openTool('nps-followup.html', 'NPS Follow-Up')">
+      <div class="tool-card-header">
+        <div class="tool-icon">⭐</div>
+        <span class="tool-badge badge-html">HTML</span>
+      </div>
+      <div class="tool-title">NPS Follow-Up</div>
+      <div class="tool-desc">Non-responder tracking across all four Norwich centres. Survey chase management and status logging.</div>
+      <div class="tool-arrow">↗</div>
+    </div>
+
+    <div class="tool-card" onclick="openTool('todo-hype.html', 'Daily Tasks')">
+      <div class="tool-card-header">
+        <div class="tool-icon">✅</div>
+        <span class="tool-badge badge-html">HTML</span>
+      </div>
+      <div class="tool-title">Daily Tasks</div>
+      <div class="tool-desc">Drag-drop .txt input, category tagging, hype messages. Your daily to-do command centre.</div>
+      <div class="tool-arrow">↗</div>
+    </div>
+  </div>
+
+  <div class="section-label">Quick Links</div>
+
+  <div class="links-grid">
+    <a class="link-card" href="https://myspacesworks.com" target="_blank">
+      <div class="link-icon">🏢</div>
+      <div class="link-info">
+        <div class="link-name">MySpacesworks</div>
+        <div class="link-url">myspacesworks.com</div>
+      </div>
+    </a>
+    <a class="link-card" href="https://go.eu.uniflowonline.com" target="_blank">
+      <div class="link-icon">🖨️</div>
+      <div class="link-info">
+        <div class="link-name">Canon Cloud Print</div>
+        <div class="link-url">go.eu.uniflowonline.com</div>
+      </div>
+    </a>
+    <a class="link-card" href="https://www.linkedin.com" target="_blank">
+      <div class="link-icon">💼</div>
+      <div class="link-info">
+        <div class="link-name">LinkedIn</div>
+        <div class="link-url">Hub posts & updates</div>
+      </div>
+    </a>
+    <a class="link-card" href="https://claude.ai" target="_blank">
+      <div class="link-icon">🤖</div>
+      <div class="link-info">
+        <div class="link-name">Claude</div>
+        <div class="link-url">claude.ai</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="section-label">Reference</div>
+
+  <div class="info-row">
+    <div class="info-card">
+      <div class="info-card-title">Billing Cycle</div>
+      <div class="info-row-item">
+        <span class="info-key">Invoices generated</span>
+        <span class="info-val">1st of each month</span>
+      </div>
+      <div class="info-row-item">
+        <span class="info-key">Office fees (advance)</span>
+        <span class="info-val">Following month</span>
+      </div>
+      <div class="info-row-item">
+        <span class="info-key">Ancillary services</span>
+        <span class="info-val">In arrears</span>
+      </div>
+      <div class="info-row-item">
+        <span class="info-key">Payment due</span>
+        <span class="info-val">15th of month</span>
+      </div>
+      <div class="info-row-item">
+        <span class="info-key">Late payment charge</span>
+        <span class="info-val">8% of overdue balance</span>
+      </div>
+      <div class="info-row-item">
+        <span class="info-key">Failed payment fee</span>
+        <span class="info-val">£25</span>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Key Contacts</div>
+      <div class="info-row-item">
+        <span class="info-key">City Manager</span>
+        <span class="info-val">Gareth Williams</span>
+      </div>
+      <div class="info-row-item">
+        <span class="info-key">Norfolk & Waveney Mind</span>
+        <span class="info-val">Sarah Ingram / Fiona O'Hara</span>
+      </div>
+      <div class="info-row-item">
+        <span class="info-key">CBRE / LBG</span>
+        <span class="info-val">Rachel Glenister</span>
+      </div>
+      <div class="info-row-item">
+        <span class="info-key">IWG Account</span>
+        <span class="info-val">John Irwin / Kira Hafner</span>
+      </div>
+      <div class="info-row-item">
+        <span class="info-key">Assembly Point</span>
+        <span class="info-val">Crown Road Car Park</span>
+      </div>
+      <div class="info-row-item">
+        <span class="info-key">Centre Phone</span>
+        <span class="info-val">01603 804 360</span>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-text">Spaces Norwich Digital Hub · Townshend House, 30 Crown Road, Norwich, NR1 3DT</div>
+    <div class="footer-text">Built with <span class="footer-accent">Claude</span> · The Cinematic Avenger Operations Division</div>
+  </footer>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeOnOverlay(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">Tool</div>
+        <button class="modal-close" onclick="closeTool()">✕</button>
+      </div>
+      <iframe class="modal-frame" id="modalFrame" src=""></iframe>
+    </div>
+  </div>
+
+  <script>
+    // Live clock
+    function updateClock() {
+      const now = new Date();
+      const time = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+      const date = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      document.getElementById('live-time').textContent = time;
+      document.getElementById('live-date').textContent = date;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // Tool modal
+    function openTool(file, title) {
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalFrame').src = file;
+      document.getElementById('modalOverlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeTool() {
+      document.getElementById('modalOverlay').classList.remove('active');
+      document.getElementById('modalFrame').src = '';
+      document.body.style.overflow = '';
+    }
+
+    function closeOnOverlay(e) {
+      if (e.target === document.getElementById('modalOverlay')) closeTool();
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeTool();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Debt Chaser — Norwich Digital Hub</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222222;
+    --border: #2e2e2e;
+    --text: #f0ede8;
+    --muted: #888;
+    --accent: #e8c547;
+    --accent2: #e8874d;
+    --tier1: #4ade80;
+    --tier2: #facc15;
+    --tier3: #fb923c;
+    --tier4: #f87171;
+    --tier5: #e879f9;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+  }
+
+  .logo {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .header-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+  }
+
+  .hero {
+    margin-bottom: 48px;
+  }
+
+  h1 {
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  h1 span {
+    color: var(--accent);
+  }
+
+  .subtitle {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 400;
+  }
+
+  /* Drop zone */
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 56px 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface);
+    position: relative;
+  }
+
+  .drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--accent);
+    background: #1f1d14;
+  }
+
+  .drop-icon {
+    font-size: 40px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .drop-label {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .drop-sub {
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  #fileInput { display: none; }
+
+  /* Summary bar */
+  .summary-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .stat-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--accent);
+  }
+
+  .stat-value.red { color: var(--tier4); }
+  .stat-value.orange { color: var(--tier3); }
+
+  /* Tier legend */
+  .tier-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .tier-pill {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 5px 12px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .tier-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  /* Client cards */
+  .clients-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .client-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .client-card:hover {
+    border-color: #444;
+  }
+
+  .client-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    cursor: pointer;
+    gap: 16px;
+  }
+
+  .client-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .tier-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+
+  .client-name {
+    font-size: 16px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .client-company {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .client-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+  }
+
+  .days-overdue {
+    text-align: right;
+  }
+
+  .days-num {
+    font-size: 22px;
+    font-weight: 800;
+    font-family: 'DM Mono', monospace;
+    line-height: 1;
+  }
+
+  .days-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .amount-owed {
+    text-align: right;
+  }
+
+  .amount-num {
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .amount-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .chevron {
+    color: var(--muted);
+    font-size: 18px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .client-card.open .chevron {
+    transform: rotate(180deg);
+  }
+
+  /* Expanded panel */
+  .client-body {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 24px;
+  }
+
+  .client-card.open .client-body {
+    display: block;
+  }
+
+  .client-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .meta-item {
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+  }
+
+  .meta-item strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .invoices-list {
+    margin-bottom: 20px;
+  }
+
+  .invoices-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .invoice-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    background: var(--surface2);
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+  }
+
+  .invoice-num { color: var(--accent); font-weight: 500; flex: 1; }
+  .invoice-date { color: var(--muted); font-size: 12px; }
+  .invoice-amount { font-weight: 500; }
+
+  /* Email draft */
+  .email-section {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .email-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .email-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+
+  .copy-btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Syne', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+
+  .copy-btn:hover { background: #f5d76e; }
+  .copy-btn.copied { background: var(--tier1); }
+
+  .email-meta {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .email-meta span { color: var(--text); }
+
+  .email-body {
+    padding: 18px;
+    font-size: 14px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    font-family: 'DM Mono', monospace;
+    color: var(--text);
+  }
+
+  /* Tier colours */
+  .t1 { background: rgba(74,222,128,0.15); color: var(--tier1); border-left: 3px solid var(--tier1); }
+  .t2 { background: rgba(250,204,21,0.15); color: var(--tier2); border-left: 3px solid var(--tier2); }
+  .t3 { background: rgba(251,146,60,0.15); color: var(--tier3); border-left: 3px solid var(--tier3); }
+  .t4 { background: rgba(248,113,113,0.15); color: var(--tier4); border-left: 3px solid var(--tier4); }
+  .t5 { background: rgba(232,121,249,0.15); color: var(--tier5); border-left: 3px solid var(--tier5); }
+
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--muted);
+  }
+
+  .empty-icon { font-size: 48px; margin-bottom: 16px; }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  #results { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Norwich Digital Hub — Debt Chaser</div>
+  <div class="header-date" id="todayDate"></div>
+</header>
+
+<div class="main">
+  <div class="hero">
+    <h1>Today's<br><span>Chase Actions</span></h1>
+    <p class="subtitle">Drop in the daily debt export. The right email is ready to copy.</p>
+  </div>
+
+  <div class="drop-zone" id="dropZone">
+    <span class="drop-icon">📂</span>
+    <div class="drop-label">Drop your Excel file here</div>
+    <div class="drop-sub">or click to browse — .xlsx or .csv accepted</div>
+    <input type="file" id="fileInput" accept=".xlsx,.csv">
+  </div>
+
+  <div id="results">
+    <div style="margin: 40px 0 24px;">
+      <div class="section-title">Summary</div>
+      <div class="summary-bar" id="summaryBar"></div>
+    </div>
+
+    <div style="margin-bottom: 24px;">
+      <div class="tier-legend">
+        <div class="tier-pill"><div class="tier-dot" style="background:var(--tier1)"></div>Chaser 1 (1-9 days)</div>
+        <div class="tier-pill"><div class="tier-dot" style="background:var(--tier2)"></div>Chaser 2 (10-15 days)</div>
+        <div class="tier-pill"><div class="tier-dot" style="background:var(--tier3)"></div>Chaser 3 (16-20 days)</div>
+        <div class="tier-pill"><div class="tier-dot" style="background:var(--tier4)"></div>Final Chaser (21-25 days)</div>
+        <div class="tier-pill"><div class="tier-dot" style="background:var(--tier5)"></div>Lock Out (26+ days)</div>
+      </div>
+    </div>
+
+    <div class="section-title">Clients requiring action</div>
+    <div class="clients-grid" id="clientsGrid"></div>
+  </div>
+</div>
+
+<script>
+  // Set today's date
+  const today = new Date();
+  document.getElementById('todayDate').textContent = today.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+
+  // Tier logic
+  function getTier(daysOverdue) {
+    if (daysOverdue <= 9)  return { num: 1, label: 'Chaser 1',      cls: 't1', color: 'var(--tier1)' };
+    if (daysOverdue <= 15) return { num: 2, label: 'Chaser 2',      cls: 't2', color: 'var(--tier2)' };
+    if (daysOverdue <= 20) return { num: 3, label: 'Chaser 3',      cls: 't3', color: 'var(--tier3)' };
+    if (daysOverdue <= 25) return { num: 4, label: 'Final Chaser',  cls: 't4', color: 'var(--tier4)' };
+    return                        { num: 5, label: 'Lock Out',      cls: 't5', color: 'var(--tier5)' };
+  }
+
+  // Email templates
+  function getEmailTemplate(tier, contact, invoices, balance) {
+    const firstName = contact.split(' ')[0];
+    const invoiceList = invoices.map(i => i.num).join(', ');
+    const invoiceListLong = invoices.length > 1
+      ? `invoices ${invoiceList}`
+      : `invoice ${invoiceList}`;
+    const subject = invoices.length > 1
+      ? `Outstanding Invoices — ${invoiceList}`
+      : `Invoice ${invoiceList}`;
+
+    const templates = {
+      1: {
+        subject,
+        body: `Hi ${firstName},\n\nI hope you are well.\n\nThis is just a quick reminder that ${invoiceListLong} ${invoices.length > 1 ? 'are' : 'is'} now overdue. Please ensure ${invoices.length > 1 ? 'these are' : 'this is'} paid, with proof of payment provided, or you may incur a late payment fee.\n\nIf you have already paid this, please provide proof of payment so we can chase allocation to your account.\n\nThanks,\nChris`
+      },
+      2: {
+        subject,
+        body: `Hi ${firstName},\n\nI hope you are well.\n\nThis is just another quick reminder that ${invoiceListLong} ${invoices.length > 1 ? 'are' : 'is'} now overdue. Please ensure ${invoices.length > 1 ? 'these are' : 'this is'} paid, with proof of payment provided, or you will incur a late payment fee.\n\nIf you have already paid this, please provide proof of payment so we can chase allocation to your account.\n\nThanks,\nChris`
+      },
+      3: {
+        subject,
+        body: `Hi ${firstName},\n\nI hope you are well.\n\nThis is just a quick reminder that ${invoiceListLong} ${invoices.length > 1 ? 'are' : 'is'} now seriously overdue. Please ensure ${invoices.length > 1 ? 'these are' : 'this is'} paid, with proof of payment provided, or you may have your services restricted.\n\nIf you have already paid this, please provide proof of payment so we can chase allocation to your account.\n\nThanks,\nChris`
+      },
+      4: {
+        subject,
+        body: `Hi ${firstName},\n\nI hope you are well.\n\nThis is just a quick reminder that ${invoiceListLong} ${invoices.length > 1 ? 'are' : 'is'} now seriously overdue. Please ensure ${invoices.length > 1 ? 'these are' : 'this is'} paid, with proof of payment provided, by the 10th, or your account will be restricted.\n\nIf you have already paid this, please provide proof of payment so we can chase allocation to your account.\n\nThanks,\nChris`
+      },
+      5: {
+        subject,
+        body: `Hi ${firstName},\n\nI hope you are well.\n\nDue to non-payment of ${invoiceListLong}, your account has been restricted. If you wish to have it reinstated, please clear the outstanding balance of ${balance} on your account and provide proof of payment.\n\nFailure to do so will mean your account will be passed to debt collectors.\n\nThanks,\nChris`
+      }
+    };
+
+    return templates[tier.num];
+  }
+
+  // Parse the uploaded file
+  function parseFile(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const wb = XLSX.read(data, { type: 'array', cellDates: true });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+
+        // Find header row
+        let headerIdx = rows.findIndex(r => r.some(c => String(c).includes('Contact Name')));
+        if (headerIdx === -1) { alert('Could not find expected headers in this file.'); return; }
+
+        const headers = rows[headerIdx].map(h => String(h).trim());
+        const dataRows = rows.slice(headerIdx + 1).filter(r => r.some(c => c !== ''));
+
+        const col = (row, name) => {
+          const i = headers.indexOf(name);
+          return i > -1 ? row[i] : '';
+        };
+
+        // Group by company
+        const companies = {};
+        for (const row of dataRows) {
+          const name    = String(col(row, 'Contact Name')).trim();
+          const company = String(col(row, 'Company Name')).trim();
+          const email   = String(col(row, 'Email')).trim();
+          const days    = parseInt(String(col(row, 'Days Overdue')).trim()) || 0;
+          const balance = String(col(row, 'Company Remaining Balance')).trim();
+          const invNum  = String(col(row, 'Invoice Number')).trim();
+          const payDate = col(row, 'Payment Due Date');
+          const amtDue  = String(col(row, 'Amount Due')).trim();
+
+          if (!name || !company || days === 0) continue;
+          if (invNum === 'Total' || invNum === '') continue;
+
+          const key = col(row, 'Titan Company ID') || company;
+          if (!companies[key]) {
+            companies[key] = { name, company, email, days, balance, invoices: [] };
+          }
+          const fmtDate = payDate instanceof Date
+            ? payDate.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })
+            : payDate ? String(payDate) : '';
+          companies[key].invoices.push({ num: invNum, date: fmtDate, amount: amtDue });
+        }
+
+        renderResults(Object.values(companies));
+      } catch(err) {
+        alert('Error reading file: ' + err.message);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function renderResults(clients) {
+    if (!clients.length) {
+      document.getElementById('results').style.display = 'block';
+      document.getElementById('clientsGrid').innerHTML = '<div class="empty-state"><div class="empty-icon">✅</div><p>No outstanding debts found.</p></div>';
+      return;
+    }
+
+    // Sort by days overdue descending
+    clients.sort((a, b) => b.days - a.days);
+
+    // Summary
+    const totalDebt = clients.reduce((sum, c) => {
+      const n = parseFloat(c.balance.replace(/[£,]/g, '')) || 0;
+      return sum + n;
+    }, 0);
+    const lockouts = clients.filter(c => c.days > 25).length;
+    const urgent   = clients.filter(c => c.days > 15).length;
+
+    document.getElementById('summaryBar').innerHTML = `
+      <div class="stat-card">
+        <div class="stat-label">Clients to chase</div>
+        <div class="stat-value">${clients.length}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total outstanding</div>
+        <div class="stat-value">£${totalDebt.toLocaleString('en-GB', {minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Urgent (16+ days)</div>
+        <div class="stat-value orange">${urgent}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Lock out stage</div>
+        <div class="stat-value red">${lockouts}</div>
+      </div>
+    `;
+
+    // Client cards
+    const grid = document.getElementById('clientsGrid');
+    grid.innerHTML = '';
+
+    clients.forEach((client, idx) => {
+      const tier = getTier(client.days);
+      const tmpl = getEmailTemplate(tier, client.name, client.invoices, client.balance);
+
+      const card = document.createElement('div');
+      card.className = 'client-card';
+      card.innerHTML = `
+        <div class="client-header">
+          <div class="client-left">
+            <div class="tier-badge ${tier.cls}">${tier.label.toUpperCase()}</div>
+            <div>
+              <div class="client-name">${client.name}</div>
+              <div class="client-company">${client.company}</div>
+            </div>
+          </div>
+          <div class="client-right">
+            <div class="days-overdue">
+              <div class="days-num" style="color:${tier.color}">${client.days}</div>
+              <div class="days-label">days over</div>
+            </div>
+            <div class="amount-owed">
+              <div class="amount-num">${client.balance}</div>
+              <div class="amount-label">outstanding</div>
+            </div>
+            <div class="chevron">▾</div>
+          </div>
+        </div>
+        <div class="client-body">
+          <div class="client-meta">
+            <div class="meta-item">📧 <strong>${client.email}</strong></div>
+            <div class="meta-item">📋 ${client.invoices.length} invoice${client.invoices.length > 1 ? 's' : ''}</div>
+          </div>
+          <div class="invoices-list">
+            <div class="invoices-title">Invoices</div>
+            ${client.invoices.map(i => `
+              <div class="invoice-row">
+                <span class="invoice-num">${i.num}</span>
+                <span class="invoice-date">Due: ${i.date}</span>
+                <span class="invoice-amount">${i.amount}</span>
+              </div>
+            `).join('')}
+          </div>
+          <div class="email-section">
+            <div class="email-header">
+              <div class="email-title">📨 ${tier.label} Email — Ready to copy</div>
+              <button class="copy-btn" onclick="copyEmail(this, ${idx})">Copy email</button>
+            </div>
+            <div class="email-meta">
+              <strong style="color:var(--muted)">To:</strong> <span>${client.email}</span><br>
+              <strong style="color:var(--muted)">Subject:</strong> <span>${tmpl.subject}</span>
+            </div>
+            <div class="email-body" id="emailBody_${idx}">${tmpl.body}</div>
+          </div>
+        </div>
+      `;
+
+      card.querySelector('.client-header').addEventListener('click', () => {
+        card.classList.toggle('open');
+      });
+
+      grid.appendChild(card);
+    });
+
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function copyEmail(btn, idx) {
+    const bodyEl = document.getElementById(`emailBody_${idx}`);
+    const text = bodyEl.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy email'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  // Drop zone wiring
+  const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('fileInput');
+
+  dropZone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', (e) => { if (e.target.files[0]) parseFile(e.target.files[0]); });
+
+  dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) parseFile(file);
+  });
+</script>
+</body>
+</html>

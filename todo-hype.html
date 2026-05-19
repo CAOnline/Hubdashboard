@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Tasks — Spaces Norwich</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f0f;
+  --surface: #1a1a1a;
+  --surface2: #242424;
+  --border: #2e2e2e;
+  --text: #f0ede8;
+  --muted: #6b6760;
+  --accent: #c8f060;
+  --accent-dim: #9dbd3f;
+  --client: #60d4f0;
+  --client-bg: #0d2f38;
+  --building: #f0a060;
+  --building-bg: #38200d;
+  --admin: #c060f0;
+  --admin-bg: #240d38;
+  --success: #60f0a0;
+  --success-bg: #0d3820;
+  --font-head: 'Syne', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  min-height: 100vh;
+  padding: 0;
+}
+
+.shell {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+/* ── HEADER ── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+  gap: 1rem;
+}
+
+.header-left {}
+
+.site-title {
+  font-family: var(--font-head);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.site-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.date-badge {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-align: right;
+  padding-top: 4px;
+}
+
+/* ── DROP ZONE ── */
+.dropzone {
+  border: 1.5px dashed var(--border);
+  border-radius: 12px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.dropzone:hover, .dropzone.dragover {
+  border-color: var(--accent);
+  background: #1a1f0f;
+}
+
+.dropzone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.drop-icon {
+  width: 36px;
+  height: 36px;
+  margin: 0 auto 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drop-arrow {
+  width: 14px;
+  height: 14px;
+  border-left: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(-45deg) translate(2px, -2px);
+}
+
+.drop-title {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.drop-sub {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.drop-hint {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 10px;
+  opacity: 0.6;
+}
+
+/* ── ADD ROW ── */
+.add-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.add-input {
+  flex: 1;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
+  padding: 0 14px;
+  height: 40px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.add-input:focus { border-color: var(--accent); }
+.add-input::placeholder { color: var(--muted); }
+
+.cat-select {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
+  padding: 0 10px;
+  height: 40px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+  cursor: pointer;
+}
+
+.add-btn {
+  background: var(--accent);
+  color: #0f0f0f;
+  border: none;
+  border-radius: 8px;
+  padding: 0 16px;
+  height: 40px;
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  white-space: nowrap;
+}
+
+.add-btn:hover { background: var(--accent-dim); }
+.add-btn:active { transform: scale(0.97); }
+
+/* ── STATS BAR ── */
+.stats-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1.25rem;
+  align-items: center;
+}
+
+.stat-pill {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+}
+
+.stat-total { background: var(--surface2); color: var(--muted); }
+.stat-done { background: var(--success-bg); color: var(--success); }
+.stat-left { background: var(--surface2); color: var(--text); }
+
+.progress-bar {
+  flex: 1;
+  height: 3px;
+  background: var(--surface2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* ── FILTER ROW ── */
+.filter-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 0.5px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  transition: all 0.15s;
+  letter-spacing: 0.04em;
+}
+
+.filter-btn:hover { border-color: var(--muted); color: var(--text); }
+.filter-btn.active { border-color: var(--accent); color: var(--accent); background: #1a1f0f; }
+
+/* ── TASK ITEMS ── */
+.task-list { display: flex; flex-direction: column; gap: 6px; }
+
+.task {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, opacity 0.3s;
+  position: relative;
+}
+
+.task:hover { background: var(--surface2); border-color: #3e3e3e; }
+
+.task.done {
+  opacity: 0.35;
+}
+
+.task.done .task-label {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.tick-box {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border);
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.task.done .tick-box {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+.tick-svg { display: none; }
+.task.done .tick-svg { display: block; }
+
+.task-label {
+  font-size: 13px;
+  line-height: 1.6;
+  flex: 1;
+  color: var(--text);
+}
+
+.cat-tag {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 500;
+  flex-shrink: 0;
+  margin-top: 2px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.cat-client { background: var(--client-bg); color: var(--client); }
+.cat-building { background: var(--building-bg); color: var(--building); }
+.cat-admin { background: var(--admin-bg); color: var(--admin); }
+.cat-other { background: var(--surface2); color: var(--muted); }
+
+.del-btn {
+  font-size: 14px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0 2px;
+  flex-shrink: 0;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.1s;
+  background: none;
+  border: none;
+}
+
+.task:hover .del-btn { opacity: 1; }
+.del-btn:hover { color: #f06060; }
+
+/* ── HYPE BANNER ── */
+.hype-banner {
+  margin-top: 1.25rem;
+  padding: 16px 18px;
+  border-radius: 10px;
+  border: 0.5px solid var(--accent);
+  background: #1a1f0f;
+  display: none;
+  animation: slide-in 0.2s ease;
+}
+
+@keyframes slide-in {
+  from { transform: translateY(-8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.hype-main {
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+}
+
+.hype-sub {
+  font-size: 12px;
+  color: var(--accent-dim);
+  margin-top: 4px;
+  letter-spacing: 0.03em;
+}
+
+/* ── ALL DONE SCREEN ── */
+.all-done {
+  display: none;
+  text-align: center;
+  padding: 3rem 0 2rem;
+  animation: slide-in 0.3s ease;
+}
+
+.all-done-head {
+  font-family: var(--font-head);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -1px;
+}
+
+.all-done-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center;
+  padding: 3rem 0;
+  display: none;
+}
+
+.empty-txt {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+/* ── CLEAR BTN ── */
+.bottom-row {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.clear-btn {
+  font-size: 11px;
+  color: var(--muted);
+  background: none;
+  border: 0.5px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  transition: all 0.15s;
+  letter-spacing: 0.04em;
+}
+
+.clear-btn:hover { color: #f06060; border-color: #f06060; }
+
+.export-btn {
+  font-size: 11px;
+  color: var(--muted);
+  background: none;
+  border: 0.5px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  transition: all 0.15s;
+  letter-spacing: 0.04em;
+}
+
+.export-btn:hover { color: var(--accent); border-color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="header">
+    <div class="header-left">
+      <div class="site-title">DAILY TASKS</div>
+      <div class="site-sub">Spaces Norwich Digital Hub</div>
+    </div>
+    <div class="date-badge" id="date-badge"></div>
+  </div>
+
+  <!-- Drop zone -->
+  <div class="dropzone" id="dropzone">
+    <input type="file" accept=".txt" id="file-input" />
+    <div class="drop-icon"><div class="drop-arrow"></div></div>
+    <div class="drop-title">Drop your .txt file here</div>
+    <div class="drop-sub">or click to browse</div>
+    <div class="drop-hint">One task per line — prefix with [client], [building] or [admin] to auto-tag</div>
+  </div>
+
+  <!-- Add row -->
+  <div class="add-row">
+    <input class="add-input" type="text" id="new-task" placeholder="Or type a task and hit enter..." />
+    <select class="cat-select" id="cat-select">
+      <option value="other">— cat</option>
+      <option value="client">Client</option>
+      <option value="building">Building</option>
+      <option value="admin">Admin</option>
+    </select>
+    <button class="add-btn" onclick="addTask()">+ Add</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar" id="stats-bar" style="display:none">
+    <span class="stat-pill stat-total" id="stat-total"></span>
+    <span class="stat-pill stat-done" id="stat-done"></span>
+    <span class="stat-pill stat-left" id="stat-left"></span>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+
+  <!-- Filter -->
+  <div class="filter-row" id="filter-row" style="display:none">
+    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('client',this)">Client</button>
+    <button class="filter-btn" onclick="setFilter('building',this)">Building</button>
+    <button class="filter-btn" onclick="setFilter('admin',this)">Admin</button>
+    <button class="filter-btn" onclick="setFilter('other',this)">Other</button>
+    <button class="filter-btn" onclick="setFilter('pending',this)">Pending</button>
+    <button class="filter-btn" onclick="setFilter('done',this)">Done</button>
+  </div>
+
+  <!-- Task list -->
+  <div class="task-list" id="task-list"></div>
+
+  <!-- Empty state -->
+  <div class="empty-state" id="empty-state">
+    <div class="empty-txt">No tasks match that filter.</div>
+  </div>
+
+  <!-- Hype banner -->
+  <div class="hype-banner" id="hype-banner">
+    <div class="hype-main" id="hype-main"></div>
+    <div class="hype-sub" id="hype-sub-txt"></div>
+  </div>
+
+  <!-- All done -->
+  <div class="all-done" id="all-done">
+    <div class="all-done-head">EVERY. SINGLE. ONE.</div>
+    <div class="all-done-sub">You absolute weapon. Go get a brew. You've earned it.</div>
+  </div>
+
+  <!-- Bottom row -->
+  <div class="bottom-row" id="bottom-row" style="display:none">
+    <button class="export-btn" onclick="exportRemaining()">Export remaining</button>
+    <button class="clear-btn" onclick="clearDone()">Clear done</button>
+    <button class="clear-btn" onclick="clearAll()">Clear all</button>
+  </div>
+
+</div>
+
+<script>
+const HYPES = [
+  ["WELL FUCKING DONE MY GUY!", "Another one bites the dust. You machine."],
+  ["GET IN THERE SON!", "That's what I'm talking about. Keep going."],
+  ["YES MATE, HAVE THAT!", "Ticked off. Sorted. Smashing it."],
+  ["ABSOLUTE SCENES!", "Look at you go. Unstoppable."],
+  ["THAT'S THE ONE!", "Done and dusted. You legend."],
+  ["GET IT, KING!", "Crossed off. The list doesn't stand a chance."],
+  ["BOOM. SORTED.", "Another one down. You're on fire."],
+  ["FUCKING HAVE THAT!", "Nailed it. On to the next one."],
+  ["YES YES YES!", "Ticked. Done. Chef's kiss."],
+  ["SEND IT!", "That task is DEAD. You killed it."],
+  ["LADS IT'S IN!", "Nothing but net. Pure class."],
+  ["HAVE SOME OF THAT!", "Crossed off. Gone. Finished. Done. Bye."]
+];
+
+let tasks = [];
+let nextId = 1;
+let activeFilter = 'all';
+let hypeTimer = null;
+
+// Date
+const d = new Date();
+document.getElementById('date-badge').textContent =
+  d.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+
+// Detect category from line prefix or keywords
+function detectCat(line) {
+  const l = line.toLowerCase();
+  if (/^\[client\]/.test(l)) return 'client';
+  if (/^\[building\]/.test(l)) return 'building';
+  if (/^\[admin\]/.test(l)) return 'admin';
+  // keyword heuristics
+  if (/lloyds|neso|ellison|harvey|arcscribe|rainbird|rouge|salto|client|cbre|booking|cards/.test(l)) return 'client';
+  if (/room|carpet|urinal|entry|plug|socket|electric|sbfm|ticket|fire|floor|301|302|303|101|105|125|309|lift|hvac|heating|plumb|maintenance/.test(l)) return 'building';
+  if (/invoice|payment|email|chase|admin|meeting|report|linkedin|parking|direct debit/.test(l)) return 'admin';
+  return 'other';
+}
+
+// Strip prefix tags from label
+function cleanLabel(line) {
+  return line.replace(/^\[(client|building|admin)\]\s*/i, '').trim();
+}
+
+// Parse txt file
+function parseTxt(text) {
+  const lines = text.split('\n')
+    .map(l => l.replace(/^[\*\-•>\d\.\)]+\s*/, '').trim())
+    .filter(l => l.length > 0);
+  lines.forEach(line => {
+    tasks.push({
+      id: nextId++,
+      label: cleanLabel(line),
+      cat: detectCat(line),
+      done: false
+    });
+  });
+  render();
+}
+
+// File input
+document.getElementById('file-input').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => parseTxt(ev.target.result);
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+// Drag and drop
+const dz = document.getElementById('dropzone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  dz.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.name.endsWith('.txt')) return;
+  const reader = new FileReader();
+  reader.onload = ev => parseTxt(ev.target.result);
+  reader.readAsText(file);
+});
+
+// Add task
+function addTask() {
+  const input = document.getElementById('new-task');
+  const val = input.value.trim();
+  if (!val) return;
+  const cat = document.getElementById('cat-select').value;
+  tasks.push({ id: nextId++, label: val, cat, done: false });
+  input.value = '';
+  document.getElementById('cat-select').value = 'other';
+  render();
+}
+
+document.getElementById('new-task').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addTask();
+});
+
+// Toggle
+function toggleTask(id) {
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  t.done = !t.done;
+  render();
+  const remaining = tasks.filter(x => !x.done).length;
+  if (t.done) {
+    if (remaining === 0) {
+      document.getElementById('hype-banner').style.display = 'none';
+      return;
+    }
+    const [h, s] = HYPES[Math.floor(Math.random() * HYPES.length)];
+    document.getElementById('hype-main').textContent = h;
+    document.getElementById('hype-sub-txt').textContent = s;
+    const banner = document.getElementById('hype-banner');
+    banner.style.display = 'block';
+    clearTimeout(hypeTimer);
+    hypeTimer = setTimeout(() => { banner.style.display = 'none'; }, 3500);
+  } else {
+    document.getElementById('hype-banner').style.display = 'none';
+  }
+}
+
+// Delete
+function deleteTask(id, e) {
+  e.stopPropagation();
+  tasks = tasks.filter(x => x.id !== id);
+  render();
+}
+
+// Filter
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+// Clear
+function clearDone() {
+  tasks = tasks.filter(x => !x.done);
+  render();
+}
+
+function clearAll() {
+  if (!confirm('Clear ALL tasks? This cannot be undone.')) return;
+  tasks = [];
+  render();
+}
+
+// Export remaining
+function exportRemaining() {
+  const lines = tasks.filter(x => !x.done).map(x => `[${x.cat}] ${x.label}`);
+  if (!lines.length) { alert('Nothing remaining!'); return; }
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'remaining-tasks.txt';
+  a.click();
+}
+
+// Render
+function render() {
+  const total = tasks.length;
+  const done = tasks.filter(x => x.done).length;
+  const remaining = total - done;
+
+  // Show/hide UI sections
+  document.getElementById('stats-bar').style.display = total ? 'flex' : 'none';
+  document.getElementById('filter-row').style.display = total ? 'flex' : 'none';
+  document.getElementById('bottom-row').style.display = total ? 'flex' : 'none';
+  document.getElementById('all-done').style.display = (total > 0 && remaining === 0) ? 'block' : 'none';
+
+  // Stats
+  document.getElementById('stat-total').textContent = total + ' tasks';
+  document.getElementById('stat-done').textContent = done + ' done';
+  document.getElementById('stat-left').textContent = remaining + ' to go';
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  // Filter tasks
+  let visible = tasks;
+  if (activeFilter === 'pending') visible = tasks.filter(x => !x.done);
+  else if (activeFilter === 'done') visible = tasks.filter(x => x.done);
+  else if (activeFilter !== 'all') visible = tasks.filter(x => x.cat === activeFilter);
+
+  const list = document.getElementById('task-list');
+  list.innerHTML = '';
+
+  document.getElementById('empty-state').style.display = (total > 0 && visible.length === 0) ? 'block' : 'none';
+
+  visible.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'task' + (t.done ? ' done' : '');
+    div.innerHTML = `
+      <div class="tick-box">
+        <svg class="tick-svg" width="10" height="10" viewBox="0 0 10 10" fill="none">
+          <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="#0f0f0f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="task-label">${t.label}</span>
+      <span class="cat-tag cat-${t.cat}">${t.cat}</span>
+      <button class="del-btn" onclick="deleteTask(${t.id},event)">&#x2715;</button>
+    `;
+    div.addEventListener('click', e => {
+      if (!e.target.classList.contains('del-btn')) toggleTask(t.id);
+    });
+    list.appendChild(div);
+  });
+}
+
+render();
+</script>
+</body>
+</html>
