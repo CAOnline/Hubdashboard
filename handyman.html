@@ -478,7 +478,7 @@ document.getElementById('exportCsvBtn').addEventListener('click', ()=>{
   if(issues.length===0){ alert('Nothing to export yet.'); return; }
   const headers = ['Date','Client','Centre','Office','Floor/Room','Handyperson Task','Request Type','Description','Logged By','Status'];
   const rows = issues.map(i=>[i.date,i.client,i.centre,i.office,i.floor,i.handy,i.type,i.desc,i.loggedby,i.status]);
-  const csv = [headers, ...rows].map(r=>r.map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(',')).join('\\n');
+  const csv = [headers, ...rows].map(r=>r.map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
   const blob = new Blob([csv], {type:'text/csv'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
