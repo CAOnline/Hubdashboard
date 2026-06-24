@@ -321,10 +321,10 @@ document.querySelectorAll('#f_handy button').forEach(b=>{
   b.addEventListener('click', ()=> setHandy(b.dataset.val));
 });
 
-async function loadIssues(){
+function loadIssues(){
   try{
-    const result = await window.storage.get(STORAGE_KEY, false);
-    issues = result && result.value ? JSON.parse(result.value) : [];
+    const raw = localStorage.getItem(STORAGE_KEY);
+    issues = raw ? JSON.parse(raw) : [];
   }catch(e){
     issues = [];
   }
@@ -332,12 +332,12 @@ async function loadIssues(){
   renderStats();
 }
 
-async function saveIssues(){
+function saveIssues(){
   try{
-    await window.storage.set(STORAGE_KEY, JSON.stringify(issues), false);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(issues));
   }catch(e){
     console.error('Could not save tracker data', e);
-    alert('There was a problem saving. Your latest entry may not have been stored — please try again.');
+    alert('There was a problem saving. Your latest entry may not have been stored — your browser storage may be full or disabled.');
   }
 }
 
